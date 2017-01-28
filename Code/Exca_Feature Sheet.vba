@@ -162,6 +162,36 @@ err_reportprob:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdViewFeaturematrix_Click()
+On Error GoTo err_ViewFeaturematrix
+    Dim Path
+    Path = sketchpath & "Features\Matrices\"
+    Path = Path & Me![Feature Number] & ".jpg"
+    If Dir(Path) = "" Then
+        MsgBox "The sketch plan of this unit has not been scanned in yet.", vbInformation, "No Sketch available to view"
+    Else
+        DoCmd.OpenForm "frm_pop_featurematrix", acNormal, , , acFormReadOnly, , Me![Feature Number]
+    End If
+Exit Sub
+err_ViewFeaturematrix:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdViewFeaturesketch_Click()
+On Error GoTo err_ViewFeaturesketch
+    Dim Path
+    Path = sketchpath & "Features\Sketches\"
+    Path = Path & Me![Feature Number] & ".jpg"
+    If Dir(Path) = "" Then
+        MsgBox "The sketch plan of this unit has not been scanned in yet.", vbInformation, "No Sketch available to view"
+    Else
+        DoCmd.OpenForm "frm_pop_featuresketch", acNormal, , , acFormReadOnly, , Me![Feature Number]
+    End If
+Exit Sub
+err_ViewFeaturesketch:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub Combo27_AfterUpdate()
 On Error GoTo err_Combo27_AfterUpdate
 If Me![Combo27].Column(1) <> "" Then
