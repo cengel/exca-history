@@ -18,7 +18,7 @@ Else
 End If
 End Sub
 Private Sub Excavation_Click()
-On Error GoTo Err_Excavation_Click
+On Error GoTo err_Excavation_Click
     Dim stDocName As String
     Dim stLinkCriteria As String
     stDocName = "Excavation"
@@ -26,7 +26,7 @@ On Error GoTo Err_Excavation_Click
     DoCmd.Close acForm, "Exca: Unit Sheet"
 Exit_Excavation_Click:
     Exit Sub
-Err_Excavation_Click:
+err_Excavation_Click:
     MsgBox Err.Description
     Resume Exit_Excavation_Click
 End Sub
@@ -178,6 +178,21 @@ Exit_open_copy_details_Click:
 Err_open_copy_details_Click:
     MsgBox Err.Description
     Resume Exit_open_copy_details_Click
+End Sub
+Private Sub Form_Open(Cancel As Integer)
+On Error GoTo err_Form_Open
+    Dim permiss
+    permiss = GetGeneralPermissions
+    If permiss = "ADMIN" Or permiss = "RW" Then
+        ToggleFormReadOnly Me, False
+    Else
+        ToggleFormReadOnly Me, True
+        If Me.AllowAdditions = False Then Me.AllowAdditions = True
+    End If
+Exit Sub
+err_Form_Open:
+    Call General_Error_Trap
+    Exit Sub
 End Sub
 Private Sub Unit_number_Exit(Cancel As Integer)
 On Error GoTo Err_Unit_number_Exit

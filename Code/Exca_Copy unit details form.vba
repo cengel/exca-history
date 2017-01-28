@@ -2,11 +2,11 @@ Option Compare Database
 Option Explicit
 Private Sub copy_data_Click()
 On Error GoTo Err_copy_data_Click
-Dim Msg, Style, Title, Response
-Msg = "This action will replace the unit sheet contents, and cannot be undone. Do you want to continue?"   ' Define message.
+Dim msg, Style, Title, Response
+msg = "This action will replace the unit sheet contents, and cannot be undone. Do you want to continue?"   ' Define message.
 Style = vbYesNo + vbQuestion + vbDefaultButton2 ' Define buttons.
 Title = "Overwriting Records"  ' Define title.
-Response = MsgBox(Msg, Style, Title)
+Response = MsgBox(msg, Style, Title)
 If Response = vbYes Then    ' User chose Yes.
     Forms![Exca: Unit Sheet]![Bedding] = Me![Bedding]
     Forms![Exca: Unit Sheet]![Inclusions] = Me![Inclusions]

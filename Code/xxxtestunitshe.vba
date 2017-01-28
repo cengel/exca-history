@@ -176,40 +176,6 @@ Err_cmdGoToBuilding_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
-Private Sub cmdGoToImage_Click()
-On Error GoTo err_cmdGoToImage_Click
-Dim mydb As DAO.Database
-Dim tmptable As TableDef, tblConn, I, msg
-Set mydb = CurrentDb
-    For I = 0 To mydb.TableDefs.count - 1 'loop the tables collection
-    Set tmptable = mydb.TableDefs(I)
-    If tmptable.Connect <> "" Then
-        tblConn = tmptable.Connect
-        Exit For
-    End If
-    Next I
-    If tblConn <> "" Then
-        If InStr(tblConn, "catalsql") = 0 Then
-            DoCmd.OpenForm "Image_Display", acNormal, , "[Unit] = '" & Me![Unit Number] & "'", acFormReadOnly, acDialog
-        Else
-            msg = "As you are working remotely the system will have to display the images in a web browser." & Chr(13) & Chr(13)
-            msg = msg & "At present this part of the website is secure, you must enter following details to gain access:" & Chr(13) & Chr(13)
-            msg = msg & "Username: catalhoyuk" & Chr(13)
-            msg = msg & "Password: SiteDatabase1" & Chr(13) & Chr(13)
-            msg = msg & "When you have finished viewing the images close your browser to return to the database."
-            MsgBox msg, vbInformation, "Photo Web Link"
-            Application.FollowHyperlink (ImageLocationOnWeb & "?field=unit&id=" & Me![Unit Number])
-        End If
-    Else
-    End If
-    Set tmptable = Nothing
-    mydb.Close
-    Set mydb = Nothing
-Exit Sub
-err_cmdGoToImage_Click:
-    Call General_Error_Trap
-    Exit Sub
-End Sub
 Private Sub cmdGoToSpace_Click()
 On Error GoTo Err_cmdGoToSpace_Click
 Dim checknum, msg, retVal, sql, permiss
@@ -340,7 +306,7 @@ If permiss = "ADMIN" Or permiss = "RW" Then
             If Me.FilterOn Then
                 ToggleFormReadOnly Me, False, "NoAdditions"
             Else
-                ToggleFormReadOnly Me, False, "NoDeletions"
+                ToggleFormReadOnly Me, False
             End If
             Me![Year].SetFocus
             Me![Unit Number].Locked = True
@@ -356,6 +322,16 @@ If Me![Priority Unit] = True Then
 Else
     Me![Open Priority].Enabled = False
 End If
+If IsNull(Me![Space]) Or Me![Space] = "" Then
+    Me![cmdGoToSpace].Enabled = False
+Else
+    Me![cmdGoToSpace].Enabled = True
+End If
+If IsNull(Me![Building]) Or Me![Building] = "" Then
+    Me![cmdGoToBuilding].Enabled = False
+Else
+    Me![cmdGoToBuilding].Enabled = True
+End If
 Me![Exca: Unit Data Categories CUT subform].Visible = False
 Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
 Me![Exca: Unit Data Categories LAYER subform].Visible = False
@@ -365,21 +341,6 @@ Me![Recognition].TabStop = True
 Me![Definition].TabStop = True
 Me![Execution].TabStop = True
 Me![Condition].TabStop = True
-Dim imageCount, Imgcaption
-imageCount = DCount("[Unit]", "Image_Metadata_Units", "[Unit] = '" & Me![Unit Number] & "'")
-If imageCount > 0 Then
-    Imgcaption = imageCount
-    If imageCount = 1 Then
-        Imgcaption = Imgcaption & " Image to Display"
-    Else
-        Imgcaption = Imgcaption & " Images to Display"
-    End If
-    Me![cmdGoToImage].Caption = Imgcaption
-    Me![cmdGoToImage].Enabled = True
-Else
-    Me![cmdGoToImage].Caption = "No Image to Display"
-    Me![cmdGoToImage].Enabled = False
-End If
 Select Case Me.Category
 Case "layer"
     Me![Exca: Subform Layer descr].Visible = True
@@ -714,7 +675,6 @@ If Me![Unit Number] <> "" Then
         ToggleFormReadOnly Me, False
     End If
 End If
-If Me![Unit Number] <> "" Then Me![lblMsg].Visible = False
 Exit Sub
 err_Unit_Number_AfterUpdate:
     Call General_Error_Trap

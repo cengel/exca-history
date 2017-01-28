@@ -1,8 +1,5 @@
 Option Compare Database
 Option Explicit
-Private Sub Form_BeforeUpdate(Cancel As Integer)
-Me![Date changed] = Now()
-End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss
@@ -11,6 +8,7 @@ On Error GoTo err_Form_Open
         ToggleFormReadOnly Me, False
     Else
         ToggleFormReadOnly Me, True
+        If Me.AllowAdditions = False Then Me.AllowAdditions = True
     End If
 Exit Sub
 err_Form_Open:

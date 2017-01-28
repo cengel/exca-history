@@ -1,12 +1,30 @@
 Option Compare Database
 Option Explicit
+Private Sub cboFindUnitToCopy_AfterUpdate()
+On Error GoTo err_cboFindUnitToCopy_AfterUpdate
+If Me![cboFindUnitToCopy] <> "" Then
+    Me.RecordSource = "SELECT * FROM [Exca: Unit Sheet] WHERE [Unit Number] = " & Me![cboFindUnitToCopy]
+    Me![Unit Number].ControlSource = "Unit Number"
+    Me![Recognition].ControlSource = "Recognition"
+    Me![Definition].ControlSource = "Definition"
+    Me![Execution].ControlSource = "Execution"
+    Me![Condition].ControlSource = "Condition"
+    Me![copy data].Enabled = True
+End If
+Exit Sub
+err_cboFindUnitToCopy_AfterUpdate:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub copy_data_Click()
 On Error GoTo Err_copy_data_Click
-Dim Msg, Style, Title, Response
-Msg = "This action will replace the unit sheet contents, and cannot be undone. Do you want to continue?"   ' Define message.
+Dim msg, Style, Title, Response
+msg = "This action will replace the unit sheet (" & Me![Text17] & ") "
+msg = msg & "fields: Recognition, Definition, Execution and Definition with those of unit " & Me![Unit Number] & " shown here." & Chr(13) & Chr(13)
+msg = msg & "This action cannot be undone. Do you want to continue?"   ' Define message.
 Style = vbYesNo + vbQuestion + vbDefaultButton2 ' Define buttons.
 Title = "Overwriting Records"  ' Define title.
-Response = MsgBox(Msg, Style, Title)
+Response = MsgBox(msg, Style, Title)
 If Response = vbYes Then    ' User chose Yes.
     Forms![Exca: Unit Sheet]![Recognition] = Me![Recognition]
     Forms![Exca: Unit Sheet]![Definition] = Me![Definition]
@@ -17,45 +35,15 @@ End If
 Exit_copy_data_Click:
     Exit Sub
 Err_copy_data_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_copy_data_Click
-End Sub
-Sub find_unit_Click()
-On Error GoTo Err_find_unit_Click
-    Screen.PreviousControl.SetFocus
-     Unit_Number.SetFocus
-    DoCmd.DoMenuItem acFormBar, acEditMenu, 10, , acMenuVer70
-Exit_find_unit_Click:
-    Exit Sub
-Err_find_unit_Click:
-    MsgBox Err.Description
-    Resume Exit_find_unit_Click
-End Sub
-Sub Command13_Click()
-On Error GoTo Err_Command13_Click
-    Screen.PreviousControl.SetFocus
-    DoCmd.FindNext
-Exit_Command13_Click:
-    Exit Sub
-Err_Command13_Click:
-    MsgBox Err.Description
-    Resume Exit_Command13_Click
-End Sub
-Sub Command14_Click()
-On Error GoTo Err_Command14_Click
-    DoCmd.DoMenuItem acFormBar, acRecordsMenu, 5, , acMenuVer70
-Exit_Command14_Click:
-    Exit Sub
-Err_Command14_Click:
-    MsgBox Err.Description
-    Resume Exit_Command14_Click
 End Sub
 Sub close_Click()
 On Error GoTo Err_close_Click
-    DoCmd.Close
+    DoCmd.Close acForm, "Exca: copy unit methodology"
 Exit_close_Click:
     Exit Sub
 Err_close_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_close_Click
 End Sub

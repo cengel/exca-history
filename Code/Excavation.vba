@@ -8,7 +8,7 @@ On Error GoTo Err_Area_Sheet_Click
 Exit_Area_Sheet_Click:
     Exit Sub
 Err_Area_Sheet_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_Area_Sheet_Click
 End Sub
 Private Sub Building_Sheet_Click()
@@ -20,7 +20,7 @@ On Error GoTo Err_Building_Sheet_Click
 Exit_Building_Sheet_Click:
     Exit Sub
 Err_Building_Sheet_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_Building_Sheet_Click
 End Sub
 Private Sub Button10_Click()
@@ -41,8 +41,30 @@ End Sub
 Private Sub Button9_Click()
 Return_to_Master_Con_Click
 End Sub
+Private Sub cmdAdmin_Click()
+On Error GoTo err_cmdAdmin_Click
+    DoCmd.OpenForm "Excavation:AdminMenu", acNormal, , , acFormReadOnly
+Exit Sub
+err_cmdAdmin_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdLists_Click()
+On Error GoTo err_cmdLists_Click
+    DoCmd.OpenForm "Excavation:ListsMenu", acNormal, , , acFormReadOnly
+Exit Sub
+err_cmdLists_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub Command18_Click()
 Open_priority_Click
+End Sub
+Private Sub Command25_Click()
+cmdLists_Click
+End Sub
+Private Sub Command27_Click()
+cmdAdmin_Click
 End Sub
 Private Sub Feature_Sheet_Button_Click()
 On Error GoTo Err_Feature_Sheet_Button_Click
@@ -53,8 +75,17 @@ On Error GoTo Err_Feature_Sheet_Button_Click
 Exit_Feature_Sheet_Button_Click:
     Exit Sub
 Err_Feature_Sheet_Button_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_Feature_Sheet_Button_Click
+End Sub
+Private Sub Form_Open(Cancel As Integer)
+If GetGeneralPermissions = "Admin" Then
+    Me![cmdAdmin].Enabled = True
+    Me![Command27].Enabled = True
+Else
+    Me![cmdAdmin].Enabled = False
+    Me![Command27].Enabled = False
+End If
 End Sub
 Sub Open_priority_Click()
 On Error GoTo Err_Open_priority_Click
@@ -65,11 +96,16 @@ On Error GoTo Err_Open_priority_Click
 Exit_Open_priority_Click:
     Exit Sub
 Err_Open_priority_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_Open_priority_Click
 End Sub
 Private Sub Return_to_Master_Con_Click()
-DoCmd.DoMenuItem acFormBar, acFileMenu, 14, , acMenuVer70
+On Error GoTo err_Return_to_Master_Con_Click
+    DoCmd.Quit acQuitSaveAll
+Exit Sub
+err_Return_to_Master_Con_Click:
+    Call General_Error_Trap
+    Exit Sub
 End Sub
 Private Sub Space_Sheet_Button_Click()
 On Error GoTo Err_Space_Sheet_Button_Click
@@ -80,7 +116,7 @@ On Error GoTo Err_Space_Sheet_Button_Click
 Exit_Space_Sheet_Button_Click:
     Exit Sub
 Err_Space_Sheet_Button_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_Space_Sheet_Button_Click
 End Sub
 Private Sub Unit_Sheet_Click()
@@ -89,21 +125,11 @@ On Error GoTo Err_Unit_Sheet_Click
     Dim stLinkCriteria As String
     stDocName = "Exca: Unit Sheet"
     DoCmd.OpenForm stDocName, , , stLinkCriteria
-    DoCmd.GoToRecord acForm, stDocName, acNewRec
 Exit_Unit_Sheet_Click:
     Exit Sub
 Err_Unit_Sheet_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_Unit_Sheet_Click
-End Sub
-Sub Command19_Click()
-On Error GoTo Err_Command19_Click
-    DoCmd.Close
-Exit_Command19_Click:
-    Exit Sub
-Err_Command19_Click:
-    MsgBox Err.Description
-    Resume Exit_Command19_Click
 End Sub
 Sub Feature_types_Click()
 On Error GoTo Err_Feature_types_Click
@@ -113,7 +139,7 @@ On Error GoTo Err_Feature_types_Click
 Exit_Feature_types_Click:
     Exit Sub
 Err_Feature_types_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_Feature_types_Click
 End Sub
 Sub interpret_Click()
@@ -124,6 +150,6 @@ On Error GoTo Err_interpret_Click
 Exit_interpret_Click:
     Exit Sub
 Err_interpret_Click:
-    MsgBox Err.Description
+    Call General_Error_Trap
     Resume Exit_interpret_Click
 End Sub

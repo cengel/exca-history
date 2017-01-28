@@ -1,8 +1,5 @@
 Option Compare Database
 Option Explicit
-Private Sub Form_BeforeUpdate(Cancel As Integer)
-Me![Date changed] = Now()
-End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss

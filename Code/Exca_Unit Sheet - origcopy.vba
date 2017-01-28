@@ -1,5 +1,15 @@
 Option Explicit
 Option Compare Database   'Use database order for string comparisons
+Private Sub Area_AfterUpdate()
+On Error GoTo err_Area_AfterUpdate
+If Me![Area].Column(1) <> "" Then
+    Me![Mound] = Me![Area].Column(1)
+End If
+Exit Sub
+err_Area_AfterUpdate:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub Category_AfterUpdate()
 Select Case Me.Category
 Case "cut"
@@ -72,6 +82,27 @@ Case "skeleton"
     Me![Exca: subform Skeletons same as].Visible = True
 End Select
 End Sub
+Private Sub cboFindUnit_AfterUpdate()
+On Error GoTo err_cboFindUnit_AfterUpdate
+    If Me![cboFindUnit] <> "" Then
+        DoCmd.GoToControl "Unit Number"
+        DoCmd.FindRecord Me![cboFindUnit]
+        Me![cboFindUnit] = ""
+    End If
+Exit Sub
+err_cboFindUnit_AfterUpdate:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdAddNew_Click()
+On Error GoTo err_cmdAddNew_Click
+    DoCmd.GoToRecord acActiveDataObject, , acNewRec
+    DoCmd.GoToControl "Unit Number"
+Exit Sub
+err_cmdAddNew_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub copy_method_Click()
 On Error GoTo Err_copy_method_Click
     Dim stDocName As String
@@ -83,19 +114,6 @@ Exit_copy_method_Click:
 Err_copy_method_Click:
     MsgBox Err.Description
     Resume Exit_copy_method_Click
-End Sub
-Private Sub cut_desc_Click()
-On Error GoTo Err_cut_desc_Click
-    Dim stDocName As String
-    Dim stLinkCriteria As String
-    stDocName = "Exca: Cut Display"
-    stLinkCriteria = "[Unit Number]=" & Me![Unit Number]
-    DoCmd.OpenForm stDocName, , , stLinkCriteria
-Exit_cut_desc_Click:
-    Exit Sub
-Err_cut_desc_Click:
-    MsgBox Err.Description
-    Resume Exit_cut_desc_Click
 End Sub
 Private Sub Excavation_Click()
 On Error GoTo err_Excavation_Click
@@ -122,73 +140,105 @@ Err_find_unit_Click:
     Resume Exit_find_unit_Click
 End Sub
 Private Sub Form_AfterInsert()
+On Error GoTo err_Form_AfterInsert
 Me![Date changed] = Now()
+Exit Sub
+err_Form_AfterInsert:
+    Call General_Error_Trap
+    Exit Sub
 End Sub
 Private Sub Form_AfterUpdate()
+On Error GoTo err_Form_AfterUpdate
 Me![Date changed] = Now()
+Exit Sub
+err_Form_AfterUpdate:
+    Call General_Error_Trap
+    Exit Sub
 End Sub
 Private Sub Form_BeforeUpdate(Cancel As Integer)
+On Error GoTo err_Form_BeforeUpdate
 Me![Date changed] = Now()
+Exit Sub
+err_Form_BeforeUpdate:
+    Call General_Error_Trap
+    Exit Sub
 End Sub
 Private Sub Form_Current()
 Dim stDocName As String
 Dim stLinkCriteria As String
+On Error GoTo err_Form_Current
+If IsNull(Me![Unit Number]) Or Me![Unit Number] = "" Then 'make rest of fields read only
+    ToggleFormReadOnly Me, True, "Additions" 'code in GeneralProcedures-shared
+    Me![lblMsg].Visible = True
+Else
+    ToggleFormReadOnly Me, False
+    Me![lblMsg].Visible = False
+End If
+Me![Text407].Locked = True
+If Me![Priority Unit] = True Then
+    Me![Open Priority].Enabled = True
+Else
+    Me![Open Priority].Enabled = False
+End If
 Me![Exca: Unit Data Categories CUT subform].Visible = True
 Me![Exca: Unit Data Categories CLUSTER subform].Visible = True
 Me![Exca: Unit Data Categories LAYER subform].Visible = True
 Select Case Me.Category
 Case "layer"
-    Me![layer desc].Visible = True
-    Me![cut desc].Visible = False
-    Me![skell desc].Visible = False
+    Me![Exca: Subform Layer descr].Visible = True
+    Me![Exca: Subform Cut descr].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = True
+    Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
 Case "cut"
-    Me![layer desc].Visible = False
-    Me![cut desc].Visible = True
-    Me![skell desc].Visible = False
+    Me![Exca: Subform Layer descr].Visible = False
+    Me![Exca: Subform Cut descr].Visible = True
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = True
-    Me![Exca: Unit Data Categories CUT subform]![Data Category] = "cut"
     Me.Refresh
+    Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
 Case "cluster"
-    Me![layer desc].Visible = True
-    Me![cut desc].Visible = False
-    Me![skell desc].Visible = False
+    Me![Exca: Subform Layer descr].Visible = True
+    Me![Exca: Subform Cut descr].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = True
-    Me![Exca: Unit Data Categories CLUSTER subform]![Data Category] = "cluster"
     Me.Refresh
+    Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
 Case "skeleton"
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
-    Me![Exca: Unit Data Categories SKELL subform]![Data Category] = "skeleton"
     Me.Refresh
-    Me![layer desc].Visible = False
-    Me![cut desc].Visible = False
-    Me![skell desc].Visible = True
+    Me![Exca: subform Skeleton Sheet].Visible = True
     Me![subform Unit: stratigraphy  same as].Visible = False
+    Me![Exca: Subform Layer descr].Visible = False
+    Me![Exca: Subform Cut descr].Visible = False
     Me![Exca: subform Skeletons same as].Visible = True
 Case Else
-    Me![layer desc].Visible = True
-    Me![cut desc].Visible = False
-    Me![skell desc].Visible = False
+    Me![Exca: Subform Layer descr].Visible = True
+    Me![Exca: Subform Cut descr].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = True
+    Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
 End Select
+Exit Sub
+err_Form_Current: 'SAJ
+    General_Error_Trap 'sub in generalprocedures module
+    Exit Sub
+End Sub
+Private Sub Form_Open(Cancel As Integer)
 End Sub
 Sub go_next_Click()
 On Error GoTo Err_go_next_Click
@@ -240,14 +290,6 @@ Err_Master_Control_Click:
     Resume Exit_Master_Control_Click
 End Sub
 Sub New_entry_Click()
-On Error GoTo Err_New_entry_Click
-    DoCmd.GoToRecord , , acNewRec
-    Mound.SetFocus
-Exit_New_entry_Click:
-    Exit Sub
-Err_New_entry_Click:
-    MsgBox Err.Description
-    Resume Exit_New_entry_Click
 End Sub
 Sub interpretation_Click()
 On Error GoTo Err_interpretation_Click
@@ -299,13 +341,17 @@ Err_go_feature_Click:
     Resume Exit_go_feature_Click
 End Sub
 Sub close_Click()
-On Error GoTo Err_close_Click
-    DoCmd.Close
-Exit_close_Click:
+On Error GoTo err_Excavation_Click
+    Dim stDocName As String
+    Dim stLinkCriteria As String
+    stDocName = "Excavation"
+    DoCmd.OpenForm stDocName, , , stLinkCriteria
+    DoCmd.Close acForm, "Exca: Unit Sheet"
+Exit_Excavation_Click:
     Exit Sub
-Err_close_Click:
+err_Excavation_Click:
     MsgBox Err.Description
-    Resume Exit_close_Click
+    Resume Exit_Excavation_Click
 End Sub
 Sub open_copy_details_Click()
 On Error GoTo Err_open_copy_details_Click
@@ -319,28 +365,31 @@ Err_open_copy_details_Click:
     MsgBox Err.Description
     Resume Exit_open_copy_details_Click
 End Sub
-Private Sub skell_desc_Click()
-On Error GoTo Err_skell_desc_Click
-    Dim stDocName As String
-    Dim stLinkCriteria As String
-    stDocName = "Exca: Skeleton Display"
-    stLinkCriteria = "[Unit Number]=" & Me![Unit Number]
-    DoCmd.OpenForm stDocName, , , stLinkCriteria
-Exit_skell_desc_Click:
+Private Sub Unit_Number_AfterUpdate()
+On Error GoTo err_Unit_Number_AfterUpdate
+Dim checknum
+If Me![Unit Number] <> "" Then
+    checknum = DLookup("[Unit Number]", "[Exca: Unit Sheet]", "[Unit Number] = " & Me![Unit Number])
+    If Not IsNull(checknum) Then
+        MsgBox "Sorry but the Unit Number " & Me![Unit Number] & " already exists, please enter another number.", vbInformation, "Duplicate Unit Number"
+        If Not IsNull(Me![Unit Number].OldValue) Then
+            Me![Unit Number] = Me![Unit Number].OldValue
+        Else
+            DoCmd.GoToControl "Year"
+            DoCmd.GoToControl "Unit Number"
+            Me![Unit Number].SetFocus
+            DoCmd.RunCommand acCmdUndo
+        End If
+    Else
+        ToggleFormReadOnly Me, False
+    End If
+End If
+Exit Sub
+err_Unit_Number_AfterUpdate:
+    Call General_Error_Trap
     Exit Sub
-Err_skell_desc_Click:
-    MsgBox Err.Description
-    Resume Exit_skell_desc_Click
 End Sub
 Private Sub Unit_number_Exit(Cancel As Integer)
-On Error GoTo Err_Unit_number_Exit
-    Me.Refresh
-Exit_Unit_number_Exit:
-    Exit Sub
-Err_Unit_number_Exit:
-    DoCmd.DoMenuItem acFormBar, acEditMenu, 0, , acMenuVer70
-    Cancel = True
-    Resume Exit_Unit_number_Exit
 End Sub
 Sub Command497_Click()
 On Error GoTo Err_Command497_Click
@@ -367,17 +416,4 @@ Exit_go_skell_Click:
 Err_go_skell_Click:
     MsgBox Err.Description
     Resume Exit_go_skell_Click
-End Sub
-Private Sub layer_desc_Click()
-On Error GoTo Err_layer_desc_Click
-    Dim stDocName As String
-    Dim stLinkCriteria As String
-    stDocName = "Exca: Layer Display"
-    stLinkCriteria = "[Unit Number]=" & Me![Unit Number]
-    DoCmd.OpenForm stDocName, , , stLinkCriteria
-Exit_layer_desc_Click:
-    Exit Sub
-Err_layer_desc_Click:
-    MsgBox Err.Description
-    Resume Exit_layer_desc_Click
 End Sub

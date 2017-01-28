@@ -10,7 +10,7 @@ Err_Close_Feature_Sheet_Click:
     Resume Exit_Close_Feature_Sheet_Click
 End Sub
 Private Sub Excavation_Click()
-On Error GoTo Err_Excavation_Click
+On Error GoTo err_Excavation_Click
     Dim stDocName As String
     Dim stLinkCriteria As String
     stDocName = "Excavation"
@@ -18,7 +18,7 @@ On Error GoTo Err_Excavation_Click
     DoCmd.Close acForm, "Exca: Feature Sheet"
 Exit_Excavation_Click:
     Exit Sub
-Err_Excavation_Click:
+err_Excavation_Click:
     MsgBox Err.Description
     Resume Exit_Excavation_Click
 End Sub
