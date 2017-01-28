@@ -2,7 +2,7 @@ Option Explicit
 Option Compare Database   'Use database order for string comparisons
 Private Sub Category_AfterUpdate()
 Select Case Me.Category
-Case "cut"
+Case "cut", "Cut"
     Me![Exca: Subform Layer descr].Visible = False
     Me![Exca: Subform Cut descr].Visible = True
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
@@ -19,7 +19,7 @@ Case "cut"
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
-Case "layer"
+Case "layer", "Layer"
     Me![Exca: Subform Layer descr].Visible = True
     Me![Exca: Subform Cut descr].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = False
@@ -36,7 +36,7 @@ Case "layer"
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
-Case "cluster"
+Case "cluster", "Cluster"
     Me![Exca: Subform Layer descr].Visible = True
     Me![Exca: Subform Cut descr].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = False
@@ -53,7 +53,7 @@ Case "cluster"
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
-Case "skeleton"
+Case "skeleton", "Skeleton"
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
@@ -71,6 +71,10 @@ Case "skeleton"
     Me![Exca: Subform Cut descr].Visible = False
     Me![Exca: subform Skeletons same as].Visible = True
 End Select
+End Sub
+Private Sub Category_BeforeUpdate(Cancel As Integer)
+End Sub
+Private Sub Category_Change()
 End Sub
 Private Sub copy_method_Click()
 On Error GoTo Err_copy_method_Click

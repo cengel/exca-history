@@ -89,7 +89,7 @@ On Error GoTo Err_Unit_Sheet_Click
     Dim stLinkCriteria As String
     stDocName = "Exca: Unit Sheet"
     DoCmd.OpenForm stDocName, , , stLinkCriteria
-    DoCmd.GoToRecord acForm, stDocName, acLast
+    DoCmd.GoToRecord acForm, stDocName, acNewRec
 Exit_Unit_Sheet_Click:
     Exit Sub
 Err_Unit_Sheet_Click:

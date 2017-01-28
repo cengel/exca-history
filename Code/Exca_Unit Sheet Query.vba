@@ -168,7 +168,7 @@ Case "cluster"
     Me.Refresh
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
-Case "skeleton"
+Case "skeleton", "Skeleton"
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
