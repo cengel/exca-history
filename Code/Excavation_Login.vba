@@ -31,6 +31,9 @@ If IsNull(Me![txtLogin]) Or IsNull(Me![txtPwd]) Then
         End If
     End If
 Else
+    Me![lblMsg].Visible = True
+    Me![lblMsg] = "System is checking your login"
+    DoCmd.RepaintObject acForm, Me.Name
     DoCmd.Hourglass True
     If LogUserIn(Me![txtLogin], Me![txtPwd]) = True Then
         DoCmd.Close acForm, "Excavation_Login" 'shut form as modal

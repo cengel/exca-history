@@ -39,8 +39,29 @@ On Error GoTo err_sampletype
             Me![Amount] = Me![SampleType].Column(1)
         End If
     End If
-    If InStr(Me![SampleType], "subsample") > 0 Then MsgBox "You must write the original sample number from which you are taking the sample in the Comment field as well as the details of the purpose of the sample", vbExclamation, "Sub sample requirements"
-    If Me![SampleType] = "" Or IsNull(Me![SampleType]) Then MsgBox "YOU MUST ENTER A SAMPLE TYPE", vbExclamation, "Missing Sample Type"
+    If InStr(Me![SampleType], "subsample") > 0 Then
+        MsgBox "You must write the original sample number from which you are taking the sample in the Comment field as well as the details of the purpose of the sample and amount. No amount is required in the amount column itself", vbExclamation, "Sub sample requirements"
+        Me![Amount (ltrs)].Locked = True
+        Me![Amount (ltrs)].Enabled = False
+    Else
+        Me![Amount (ltrs)].Locked = False
+        Me![Amount (ltrs)].Enabled = True
+    End If
+    If Me![SampleType] = "" Or IsNull(Me![SampleType]) Then
+        MsgBox "YOU MUST ENTER A SAMPLE TYPE", vbExclamation, "Missing Sample Type"
+    End If
+Exit Sub
+err_sampletype:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub SampleType_LostFocus()
+On Error GoTo err_sampletype
+If Me![SampleType] = "" Or IsNull(Me![SampleType]) Then
+    MsgBox "YOU MUST ENTER A SAMPLE TYPE", vbExclamation, "Missing Sample Type"
+    DoCmd.GoToControl Me![X].Name
+    DoCmd.GoToControl Me![SampleType].Name
+End If
 Exit Sub
 err_sampletype:
     Call General_Error_Trap

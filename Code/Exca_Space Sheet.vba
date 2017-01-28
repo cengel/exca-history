@@ -62,9 +62,29 @@ Private Sub cboHodderPhase_AfterUpdate()
 On Error GoTo err_phase
     If Me![cboHodderPhase] <> "" Then
         Me![txtHodderPhase] = Me![Area] & "." & Me![cboHodderPhase]
+        Dim sql
+        If Me![cboHodderPhase] = "Post-Chalcolithic" Then
+            sql = "UPDATE ([Exca: Space Sheet] INNER JOIN [Exca: Units in Spaces] ON [Exca: Space Sheet].[Space number] = "
+            sql = sql & "[Exca: Units in Spaces].In_space) INNER JOIN [Exca: Unit Sheet] ON [Exca: Units in Spaces].Unit = "
+            sql = sql & "[Exca: Unit Sheet].[Unit Number] SET [Exca: Unit Sheet].TimePeriod = 'Post-Chalcolithic' "
+            sql = sql & "WHERE ((([Exca: Space Sheet].[Space number])=" & Me![Space number] & "));"
+            DoCmd.RunSQL sql
+        ElseIf Me![cboHodderPhase] = "Chalcolithic" Then
+            sql = "UPDATE ([Exca: Space Sheet] INNER JOIN [Exca: Units in Spaces] ON [Exca: Space Sheet].[Space number] = "
+            sql = sql & "[Exca: Units in Spaces].In_space) INNER JOIN [Exca: Unit Sheet] ON [Exca: Units in Spaces].Unit = "
+            sql = sql & "[Exca: Unit Sheet].[Unit Number] SET [Exca: Unit Sheet].TimePeriod = 'Chalcolithic' "
+            sql = sql & "WHERE ((([Exca: Space Sheet].[Space number])=" & Me![Space number] & "));"
+            DoCmd.RunSQL sql
+        ElseIf Len(Me![cboHodderPhase]) < 3 Then 'will be a ?letter or letter = neolithic - this will ignore unknown etc
+            sql = "UPDATE ([Exca: Space Sheet] INNER JOIN [Exca: Units in Spaces] ON [Exca: Space Sheet].[Space number] = "
+            sql = sql & "[Exca: Units in Spaces].In_space) INNER JOIN [Exca: Unit Sheet] ON [Exca: Units in Spaces].Unit = "
+            sql = sql & "[Exca: Unit Sheet].[Unit Number] SET [Exca: Unit Sheet].TimePeriod = 'Neolithic' "
+            sql = sql & "WHERE ((([Exca: Space Sheet].[Space number])=" & Me![Space number] & "));"
+            DoCmd.RunSQL sql
+        End If
     Else
         Dim response
-        response = MsgBox("Do you wish the Hodder Phase field to be blank?", vbYesNo + vbQuestion, "Action confirmation")
+        response = MsgBox("Do you wish the Hodder Level field to be blank?", vbYesNo + vbQuestion, "Action confirmation")
         If response = vbYes Then
             Me![txtHodderPhase] = ""
         End If
@@ -83,6 +103,29 @@ If Me!chkExternal = True Then
 Else
     Me![Exca: subform Phases related to Space].Enabled = False
     Me![Exca: subform Phases related to Space].Locked = True
+End If
+If Me![ExternalToBuilding] = True Then
+    Me![ExternalSpaceInfillingProcess].Enabled = True
+    Me![cboOutline].Enabled = True
+Else
+    Me![ExternalSpaceInfillingProcess].Enabled = False
+    Me![cboOutline].Enabled = False
+End If
+If Me![ExternalToBuilding] = True Then
+    Me![ExternalSpaceInfillingProcess].Enabled = True
+Else
+    If Me![ExternalSpaceInfillingProcess] <> "" Or Me![cboOutline] <> "" Then
+        Dim resp
+        resp = MsgBox("Only external spaces can have an infilling process / outline, this value will therefore be removed. You must assign it to the building. Are you sure you wish to make this change?", vbYesNo + vbExclamation, "This affects infilling process")
+        If resp = vbYes Then
+            Me![ExternalSpaceInfillingProcess] = ""
+            Me![ExternalSpaceInfillingProcess].Enabled = False
+            Me![cboOutline] = ""
+            Me![cboOutline].Enabled = False
+        Else
+            Me![ExternalToBuilding] = True
+        End If
+    End If
 End If
 Exit Sub
 err_chk:
@@ -181,6 +224,14 @@ err_cmdGoToImage_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdHelp_Click()
+On Error GoTo Err_cmdHelp_Click
+MsgBox "A help message to explain the post excavation fields will appear soon", vbInformation, "Help"
+Exit_cmdHelp_Click:
+    Exit Sub
+Err_cmdHelp_Click:
+    Resume Exit_cmdHelp_Click
+End Sub
 Private Sub cmdPrintSpaceSheet_Click()
 On Error GoTo err_cmdSpace
     Dim resp, both
@@ -260,13 +311,19 @@ backhere:
 Imgcaption = "Images of Space"
 Me![cmdGoToImage].Caption = Imgcaption
 Me![cmdGoToImage].Enabled = True
-Me![cmdGoToImage].Enabled = False
 If Me!chkExternal = True Then
     Me![Exca: subform Phases related to Space].Enabled = True
     Me![Exca: subform Phases related to Space].Locked = False
 Else
     Me![Exca: subform Phases related to Space].Enabled = False
     Me![Exca: subform Phases related to Space].Locked = True
+End If
+If Me![ExternalToBuilding] = True Then
+    Me![ExternalSpaceInfillingProcess].Enabled = True
+    Me![cboOutline].Enabled = True
+Else
+    Me![ExternalSpaceInfillingProcess].Enabled = False
+    Me![cboOutline].Enabled = False
 End If
 Exit Sub
 err_Form_Current:
@@ -301,6 +358,13 @@ If Me!chkExternal = True Then
 Else
     Me![Exca: subform Phases related to Space].Enabled = False
     Me![Exca: subform Phases related to Space].Locked = True
+End If
+If Me![ExternalToBuilding] = True Then
+    Me![ExternalSpaceInfillingProcess].Enabled = True
+    Me![cboOutline].Enabled = True
+Else
+    Me![ExternalSpaceInfillingProcess].Enabled = False
+    Me![cboOutline].Enabled = False
 End If
 Exit Sub
 err_Form_Open:

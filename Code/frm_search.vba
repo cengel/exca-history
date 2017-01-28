@@ -29,6 +29,10 @@ If Me![txtLevels] <> "" Then
     If wheresql <> "" Then wheresql = wheresql & " AND "
     wheresql = wheresql & "(" & Me![txtLevels] & ")"
 End If
+If Me![txtHodderLevel] <> "" Then
+    If wheresql <> "" Then wheresql = wheresql & " AND "
+    wheresql = wheresql & "(" & Me![txtHodderLevel] & ")"
+End If
 If Me![txtCategory] <> "" Then
     If wheresql <> "" Then wheresql = wheresql & " AND "
     wheresql = wheresql & "[Category] like '%" & Me![txtCategory] & "%'"
@@ -54,7 +58,7 @@ If Me![cboDataCategory] <> "" Then
                 "[Exca: Unit Sheet with Relationships].Area, [Exca: Unit Sheet with Relationships].Category, " & _
                 "[Exca: Unit Sheet with Relationships].[Grid X], [Exca: Unit Sheet with Relationships].[Grid Y], " & _
                 "[Exca: Unit Sheet with Relationships].Description, [Exca: Unit Sheet with Relationships].Discussion, [Exca: Unit Sheet with Relationships].[Priority Unit], " & _
-                "[Exca: Unit Sheet with Relationships].ExcavationStatus, [Exca: Unit Sheet with Relationships].Levels, " & _
+                "[Exca: Unit Sheet with Relationships].ExcavationStatus, [Exca: Unit Sheet with Relationships].HodderLevel, [Exca: Unit Sheet with Relationships].MellaartLevels," & _
                 "[Exca: Unit Sheet with Relationships].Building, [Exca: Unit Sheet with Relationships].Space, [Exca: Unit Sheet with Relationships].Feature, " & _
                 "[Exca: Unit Sheet with Relationships].TimePeriod, [Exca: Unit Data Categories].[Data Category]" & _
                 " FROM [Exca: Unit Sheet with Relationships] INNER JOIN [Exca: Unit Data Categories] ON [Exca: Unit Sheet with Relationships].[Unit Number] = [Exca: Unit Data Categories].[Unit Number]"
@@ -92,6 +96,14 @@ err_feature:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdClearHodder_Click()
+On Error GoTo err_cmdClearHodder
+Me![txtHodderLevel] = ""
+Exit Sub
+err_cmdClearHodder:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cmdCLearLevel_Click()
 On Error GoTo err_level
 Me![txtLevels] = ""
@@ -115,6 +127,7 @@ Me![txtBuildingNumbers] = ""
 Me![txtSpaceNumbers] = ""
 Me![txtFeatureNumbers] = ""
 Me![txtLevels] = ""
+Me![txtHodderLevel] = ""
 Me![txtCategory] = ""
 Me![cboArea] = ""
 Me![cboYear] = ""
@@ -159,11 +172,22 @@ err_enterfeature:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdEnterHodder_Click()
+On Error GoTo err_enterHlevel
+Dim openarg
+openarg = "HodderLevel"
+If Me![txtHodderLevel] <> "" Then openarg = "HodderLevel;" & Me![txtHodderLevel]
+DoCmd.OpenForm "frm_popsearch", , , , , acDialog, openarg
+Exit Sub
+err_enterHlevel:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cmdEnterLevel_Click()
 On Error GoTo err_enterlevel
 Dim openarg
-openarg = "Levels"
-If Me![txtLevels] <> "" Then openarg = "Levels;" & Me![txtLevels]
+openarg = "MellaartLevels"
+If Me![txtLevels] <> "" Then openarg = "MellaartLevels;" & Me![txtLevels]
 DoCmd.OpenForm "frm_popsearch", , , , , acDialog, openarg
 Exit Sub
 err_enterlevel:

@@ -26,9 +26,23 @@ On Error GoTo err_cmdOK
     Else
         Dim sql, strcomment
         strcomment = Replace(Me![Comment], "'", "''") 'bug fix july 2009 on site
-        sql = "INSERT INTO [Exca: Report_Problem] ([EntityNumber], [EntityType], [Comment], [ReportersName], [ReportedOn]) VALUES (" & entitynum & ", '" & toShow & "', '" & strcomment & "', '" & Me![ReportersName] & "', Format(Date(), 'dd/mm/yyyy'));"
-        DoCmd.RunSQL sql
-        MsgBox "Thank you, your report has been saved for the Administrator to check", vbInformation, "Done"
+        If spString <> "" Then
+            Dim mydb As DAO.Database
+            Dim myq1 As QueryDef
+            Set mydb = CurrentDb
+            Set myq1 = mydb.CreateQueryDef("")
+            myq1.Connect = spString
+            myq1.ReturnsRecords = False
+            myq1.sql = "sp_Excavation_Add_Problem_Report_Entry " & entitynum & ", '" & toShow & "','" & strcomment & "','" & Me![ReportersName] & "','" & Format(Date, "dd/mm/yyyy") & "'"
+            myq1.Execute
+            myq1.Close
+            Set myq1 = Nothing
+            mydb.Close
+            Set mydb = Nothing
+            MsgBox "Thank you, your report has been saved for the Administrator to check", vbInformation, "Done"
+        Else
+            MsgBox "Sorry but this comment cannot be inserted at this time, please restart the database and try again", vbCritical, "Error"
+        End If
         DoCmd.Close acForm, "frm_pop_problemreport"
     End If
 Exit Sub

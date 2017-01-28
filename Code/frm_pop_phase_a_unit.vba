@@ -35,8 +35,10 @@ err_cmdOK:
 End Sub
 Private Sub cmdRemove_Click()
 On Error GoTo err_cmdRemove
-    Dim Unit, getEquals, Phase, getNumber, sql
+    Dim Unit, getEquals, Phase, getNumber, sql, resp
     Unit = Forms![Exca: Unit Sheet]![Unit Number]
+ resp = MsgBox("This will remove all the phasing associated with Unit " & Unit & " - ARE YOU SURE?" & Chr(13) & Chr(13) & "To remove one phase item only: on the main unit sheet click over the arrow to the right of the specific phase and press delete.", vbCritical + vbYesNo, "Confirm Action")
+ If resp = vbYes Then
     getEquals = InStr(Me!cboSelect.RowSource, "=") 'format is =Sp115.1 or B42. etc etc
     getNumber = Mid(Me!cboSelect.RowSource, getEquals + 1, (Len(Me!cboSelect.RowSource) - 1) - getEquals)
     If InStr(Me!cboSelect.RowSource, "Space") > 0 Then
@@ -44,8 +46,9 @@ On Error GoTo err_cmdRemove
     Else
         Phase = "B" & getNumber & "."
     End If
-    sql = "DELETE FROM [Exca: Units Occupation Phase] WHERE Unit = " & Unit & " AND [OccupationPhase] like '" & Phase & "%';"
+    sql = "DELETE FROM [Exca: Units Occupation Phase] WHERE Unit = " & Unit & ";"
     DoCmd.RunSQL sql
+End If
     DoCmd.Close acForm, Me.Name
 Exit Sub
 err_cmdRemove:

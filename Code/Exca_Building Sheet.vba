@@ -80,7 +80,7 @@ Set mydb = CurrentDb
     Set mydb = Nothing
 Exit Sub
 err_cmdGoToImage_Click:
-    Call General_Error_Trap
+        Call General_Error_Trap
     Exit Sub
 End Sub
 Private Sub cmdPrintBuildingSheet_Click()
@@ -102,6 +102,32 @@ err_reportprob:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub EstProportionofBuildingEx_AfterUpdate()
+On Error GoTo err_est
+If Me![EstProportionofBuildingEx] = "" Or IsNull(Me![EstProportionofBuildingEx]) Then
+    Me![chkInfill].Enabled = False
+    Me![chkPartOcc].Enabled = False
+    Me![chkComplete].Enabled = False
+    Me![chkConstruction].Enabled = False
+    Me![chkWalls].Enabled = False
+    Me![chkOutline].Enabled = False
+    Me![chkOther].Enabled = False
+    Me![txtPropNotes].Enabled = False
+Else
+    Me![chkInfill].Enabled = True
+    Me![chkPartOcc].Enabled = True
+    Me![chkComplete].Enabled = True
+    Me![chkConstruction].Enabled = True
+    Me![chkWalls].Enabled = True
+    Me![chkOutline].Enabled = True
+    Me![chkOther].Enabled = True
+    Me![txtPropNotes].Enabled = True
+End If
+Exit Sub
+err_est:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub Excavation_Click()
 On Error GoTo err_Excavation_Click
     Dim stDocName As String
@@ -111,6 +137,9 @@ Exit Sub
 err_Excavation_Click:
     Call General_Error_Trap
     Exit Sub
+End Sub
+Private Sub Field24_AfterUpdate()
+Me![Mound] = Me![Field24].Column(1)
 End Sub
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 On Error GoTo err_Form_BeforeUpdate
@@ -150,6 +179,26 @@ backhere:
 Imgcaption = "Images of Building"
     Me![cmdGoToImage].Caption = Imgcaption
     Me![cmdGoToImage].Enabled = True
+If Me![EstProportionofBuildingEx] = "" Or IsNull(Me![EstProportionofBuildingEx]) Then
+    Me![chkInfill].Enabled = False
+    Me![chkPartOcc].Enabled = False
+    Me![chkComplete].Enabled = False
+    Me![chkConstruction].Enabled = False
+    Me![chkWalls].Enabled = False
+    Me![chkOutline].Enabled = False
+    Me![chkOther].Enabled = False
+    Me![txtPropNotes].Enabled = False
+Else
+    Me![chkInfill].Enabled = True
+    Me![chkPartOcc].Enabled = True
+    Me![chkComplete].Enabled = True
+    Me![chkConstruction].Enabled = True
+    Me![chkWalls].Enabled = True
+    Me![chkOutline].Enabled = True
+    Me![chkOther].Enabled = True
+    Me![txtPropNotes].Enabled = True
+End If
+Me![Mound] = Me![Field24].Column(1)
 Exit Sub
 err_Form_Open:
     If Err.Number = 3146 Then 'odbc call failed, crops up every so often on all
@@ -204,6 +253,25 @@ On Error GoTo err_Form_Open
         ToggleFormReadOnly Me, True
         Me![cmdAddNew].Enabled = False
     End If
+    If Me![EstProportionofBuildingEx] = "" Or IsNull(Me![EstProportionofBuildingEx]) Then
+        Me![chkInfill].Enabled = False
+        Me![chkPartOcc].Enabled = False
+        Me![chkComplete].Enabled = False
+        Me![chkConstruction].Enabled = False
+        Me![chkWalls].Enabled = False
+        Me![chkOutline].Enabled = False
+        Me![chkOther].Enabled = False
+        Me![txtPropNotes].Enabled = False
+    Else
+        Me![chkInfill].Enabled = True
+        Me![chkPartOcc].Enabled = True
+        Me![chkComplete].Enabled = True
+        Me![chkConstruction].Enabled = True
+        Me![chkWalls].Enabled = True
+        Me![chkOutline].Enabled = True
+        Me![chkOther].Enabled = True
+        Me![txtPropNotes].Enabled = True
+    End If
 Exit Sub
 err_Form_Open:
     Call General_Error_Trap
@@ -237,4 +305,12 @@ Exit Sub
 err_Number_AfterUpdate:
     Call General_Error_Trap
     Exit Sub
+End Sub
+Private Sub cmdHelp_Click()
+On Error GoTo Err_cmdHelp_Click
+MsgBox "A help message to explain the Human Burial Assemblage field will appear soon", vbInformation, "Help"
+Exit_cmdHelp_Click:
+    Exit Sub
+Err_cmdHelp_Click:
+    Resume Exit_cmdHelp_Click
 End Sub

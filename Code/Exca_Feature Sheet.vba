@@ -287,7 +287,6 @@ backhere:
 Imgcaption = "Images of Feature"
 Me![cmdGoToImage].Caption = Imgcaption
 Me![cmdGoToImage].Enabled = True
-Me![cmdGoToImage].Enabled = False
 If permiss = "ADMIN" And LCase(Me![Feature Type]) = "burial" Then
     Me!txtBurialMNI.Enabled = True
     Me!txtBurialMNI.Locked = False

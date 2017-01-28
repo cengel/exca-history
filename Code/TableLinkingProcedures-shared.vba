@@ -103,6 +103,7 @@ If username <> "" And pwd <> "" Then
          Set tmptable = mydb.TableDefs(I)
         If tmptable.Connect <> "" Then
             If connStr = "" Then connStr = tmptable.Connect
+            Forms![Excavation_Login]![lblMsg] = "System is contacting the server"
             On Error Resume Next
                 myq.Connect = tmptable.Connect & ";UID=" & username & ";PWD=" & pwd
                 myq.ReturnsRecords = False 'don't waste resources bringing back records
@@ -112,8 +113,10 @@ If username <> "" And pwd <> "" Then
                 GoTo err_LogUserIn
             Else
                 On Error GoTo err_LogUserIn:
+                Forms![Excavation_Login]![lblMsg] = "System is refreshing the link to the server"
                 tmptable.Connect = tmptable.Connect & ";UID=" & username & ";PWD=" & pwd
                 tmptable.RefreshLink
+                Forms![Excavation_Login]![lblMsg] = "Refresh Complete"
             End If
             Exit For 'only necessary for one table for Access to set up the correct link to SQL Server
         End If
@@ -121,6 +124,7 @@ If username <> "" And pwd <> "" Then
 Else
     MsgBox "Both a username and password are required to operate the system correctly. Please quit and restart the application.", vbCritical, "Login problem encountered"
 End If
+Forms![Excavation_Login]![lblMsg] = "Defing permissions"
 SetGeneralPermissions username, pwd, connStr 'requires more thought
 LogUserIn = True
 cleanup:

@@ -6,14 +6,16 @@ End Sub
 Private Sub cmdBuildingReport_Click()
 On Error GoTo err_cmdBuilding
     Dim resp, both
-    resp = InputBox("If you wish to only report on a certain building please enter the number below, otherwise leave blank for all buildings.", "Specify Building?")
-    both = MsgBox("Do you want a list of the associated Units as well?", vbQuestion + vbYesNo, "Units?")
+    resp = InputBox("If you wish to only report on a certain building please enter the number below, otherwise leave All for all buildings.", "Specify Building?", "All")
     If resp <> "" Then
-        DoCmd.OpenReport "R_BuildingSheet", acViewPreview, , "[Number] = " & resp
-        If both = vbYes Then DoCmd.OpenReport "R_Units_in_Buildings", acViewPreview, , "[In_Building] = " & resp
-    Else
-        DoCmd.OpenReport "R_BuildingSheet", acViewPreview
-        If both = vbYes Then DoCmd.OpenReport "R_Units_in_Buildings", acViewPreview
+        both = MsgBox("Do you want a list of the associated Units as well?", vbQuestion + vbYesNo, "Units?")
+        If resp <> "All" Then
+            DoCmd.OpenReport "R_BuildingSheet", acViewPreview, , "[Number] = " & resp
+            If both = vbYes Then DoCmd.OpenReport "R_Units_in_Buildings", acViewPreview, , "[In_Building] = " & resp
+        Else
+            DoCmd.OpenReport "R_BuildingSheet", acViewPreview
+            If both = vbYes Then DoCmd.OpenReport "R_Units_in_Buildings", acViewPreview
+        End If
     End If
 Exit Sub
 err_cmdBuilding:
@@ -55,14 +57,16 @@ End Sub
 Private Sub cmdSpaceSheet_Click()
 On Error GoTo err_cmdSpace
     Dim resp, both
-    resp = InputBox("If you wish to only report on a certain space please enter the number below, otherwise leave blank for all spaces.", "Specify Space?")
-    both = MsgBox("Do you want a list of the associated Units as well?", vbQuestion + vbYesNo, "Units?")
+    resp = InputBox("If you wish to only report on a certain space please enter the number below, otherwise leave All in place for all spaces.", "Specify Space?", "All")
     If resp <> "" Then
-        DoCmd.OpenReport "R_SpaceSheet", acViewPreview, , "[Space Number] = " & resp
-        If both = vbYes Then DoCmd.OpenReport "R_Units_in_Spaces", acViewPreview, , "[In_Space] = " & resp
-    Else
-        DoCmd.OpenReport "R_SpaceSheet", acViewPreview
-        If both = vbYes Then DoCmd.OpenReport "R_Units_in_Spaces", acViewPreview
+        both = MsgBox("Do you want a list of the associated Units as well?", vbQuestion + vbYesNo, "Units?")
+        If resp <> "All" Then
+            DoCmd.OpenReport "R_SpaceSheet", acViewPreview, , "[Space Number] = " & resp
+            If both = vbYes Then DoCmd.OpenReport "R_Units_in_Spaces", acViewPreview, , "[In_Space] = " & resp
+        Else
+            DoCmd.OpenReport "R_SpaceSheet", acViewPreview
+            If both = vbYes Then DoCmd.OpenReport "R_Units_in_Spaces", acViewPreview
+        End If
     End If
 Exit Sub
 err_cmdSpace:

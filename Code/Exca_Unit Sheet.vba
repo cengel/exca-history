@@ -595,16 +595,6 @@ err_Excavation_Click:
 End Sub
 Private Sub FastTrack_Click()
 On Error GoTo err_FastTrack_Click
-    If Me![FastTrack] = True Then
-        Me![RemainingVolume].Enabled = True
-    Else
-        If Me![RemainingVolume] <> 0 And Not IsNull(Me![RemainingVolume]) And Me![RemainingVolume] <> "" Then
-            MsgBox "This unit records an Unsieved volume figure. There is no unsieved volume for a non fast track unit so please sort this out first (if it is invalid please remove the unsieved volume figure)", vbExclamation, "Volume Problem"
-            Me![FastTrack] = True
-        Else
-            Me![RemainingVolume].Enabled = False
-        End If
-    End If
 Exit Sub
 err_FastTrack_Click:
     Call General_Error_Trap
@@ -703,8 +693,6 @@ Dim Path
 Path = sketchpath
 Path = Path & Me![Unit Number] & ".jpg"
         Me!cmdViewSketch.Enabled = True
-Me![cmdGoToImage].Enabled = False
-Me!cmdViewSketch.Enabled = False
 Select Case Me.Category
 Case "layer"
     Me![Exca: Subform Layer descr].Visible = True
@@ -791,10 +779,18 @@ If Me![cboExcavationStatus] <> "excavated" And Me![cboExcavationStatus] <> "not 
 Else
     Me![Category].Enabled = True
 End If
-If Me![FastTrack] = True Then
-    Me![RemainingVolume].Enabled = True
-Else
+If permiss <> "ADMIN" And (Me![Year] >= 2003 And Me![Year] <= 2008 And (Me![Area] = "4040" Or Me![Area] = "South")) Then
+    Me![TotalSampleAmount].Enabled = False
+    Me![Dry sieve volume].Enabled = False
     Me![RemainingVolume].Enabled = False
+    Me![TotalDepositVolume].Enabled = False
+    Me![HowVolumeCalc].Enabled = False
+Else
+    Me![TotalSampleAmount].Enabled = True
+    Me![Dry sieve volume].Enabled = True
+    Me![TotalDepositVolume].Enabled = True
+    Me![HowVolumeCalc].Enabled = True
+        Me![RemainingVolume].Enabled = True
 End If
 Exit Sub
 err_Form_Current: 'SAJ

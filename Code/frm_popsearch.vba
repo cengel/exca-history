@@ -47,8 +47,10 @@ On Error GoTo err_cmdOK
             Forms![frm_search]![txtSpaceNumbers] = Me![txtToFind]
         Case "feature"
             Forms![frm_search]![txtFeatureNumbers] = Me![txtToFind]
-        Case "levels"
+        Case "MellaartLevels"
             Forms![frm_search]![txtLevels] = Me![txtToFind]
+        Case "HodderLevel"
+            Forms![frm_search]![txtHodderLevel] = Me![txtToFind]
         Case "unit number"
             Forms![frm_search]![txtUnitNumbers] = Me![txtToFind]
         End Select
@@ -81,9 +83,13 @@ Dim existing, colonpos
             Me![lblTitle].Caption = "Select Feature Number"
             Me![cboSelect].RowSource = "Select [Feature Number] from [Exca: Features];"
             If existing <> "" Then Me![txtToFind] = existing
-        Case "levels"
-            Me![lblTitle].Caption = "Select Level"
+        Case "Mellaartlevels"
+            Me![lblTitle].Caption = "Select Mellaart Level"
             Me![cboSelect].RowSource = "Select [Level] from [Exca:LevelLOV];"
+            If existing <> "" Then Me![txtToFind] = existing
+        Case "Hodderlevel"
+            Me![lblTitle].Caption = "Select Hodder Level"
+            Me![cboSelect].RowSource = "SELECT DISTINCT [Exca: Space Sheet].HodderLevel FROM [Exca: Space Sheet] WHERE ((([Exca: Space Sheet].HodderLevel) <> '')) ORDER BY [Exca: Space Sheet].HodderLevel;"
             If existing <> "" Then Me![txtToFind] = existing
         Case "unit number"
             Me![lblTitle].Caption = "Select Unit Number"
