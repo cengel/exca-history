@@ -24,16 +24,16 @@ Private Sub Excavation_Click()
 End Sub
 Private Sub cmdEdit_Click()
 On Error GoTo Err_cmdEdit_Click
-Dim checkValidAction, checkValidAction2, checkValidAction3, retVal
+Dim checkValidAction, checkValidAction2, checkValidAction3, retval
     checkValidAction = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "Level", "edit")
     If checkValidAction = "ok" Then
         checkValidAction2 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelStart", "edit")
         If checkValidAction2 = "ok" Then
             checkValidAction3 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelEnd", "edit")
             If checkValidAction3 = "ok" Then
-                retVal = InputBox("No records refer to this Level (" & Me![txtLevel] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Level that you wish to replace this entry with:", "Enter edited Level")
-                If retVal <> "" Then
-                    Me![txtLevel] = retVal
+                retval = InputBox("No records refer to this Level (" & Me![txtLevel] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Level that you wish to replace this entry with:", "Enter edited Level")
+                If retval <> "" Then
+                    Me![txtLevel] = retval
                 End If
             ElseIf checkValidAction3 = "fail" Then
                 MsgBox "Sorry but the system has been unable to check whether this value is used by any dependant tables, please contact the DBA", vbCritical, "Integrity Check Failed"
@@ -59,9 +59,9 @@ End Sub
 Private Sub cmdDelete_Click()
 On Error GoTo Err_cmdDelete_Click
 Dim BUnit, BFeature
-Dim retVal, msg, msg1
-retVal = MsgBox("You have selected to delete Building number: " & Me![txtBuildingNumber] & ". The system will now check what additional data exists for this Building and will prompt you again before deleting it." & Chr(13) & Chr(13) & "Are you sure you want to continue?", vbCritical + vbYesNo, "Confirm Action")
-If retVal = vbYes Then
+Dim retval, msg, msg1
+retval = MsgBox("You have selected to delete Building number: " & Me![txtBuildingNumber] & ". The system will now check what additional data exists for this Building and will prompt you again before deleting it." & Chr(13) & Chr(13) & "Are you sure you want to continue?", vbCritical + vbYesNo, "Confirm Action")
+If retval = vbYes Then
     BUnit = AdminDeletionCheck("Exca: Units in Buildings", "In_Building", Me![txtBuildingNumber], "Related to Unit", "Unit")
     BFeature = AdminDeletionCheck("Exca: Features in Buildings", "In_Building", Me![txtBuildingNumber], "Related to Feature", "Feature")
     If BUnit <> "" Then msg = msg & BUnit & "; "
@@ -73,8 +73,8 @@ If retVal = vbYes Then
         msg = msg1 & msg
     End If
     msg = msg & Chr(13) & Chr(13) & "Are you quite sure that you want to permanently delete Building " & Me![txtBuildingNumber] & "?"
-    retVal = MsgBox(msg, vbCritical + vbYesNoCancel, "Confirm Permanent Deletion")
-    If retVal = vbYes Then
+    retval = MsgBox(msg, vbCritical + vbYesNoCancel, "Confirm Permanent Deletion")
+    If retval = vbYes Then
         On Error Resume Next
         Dim mydb As DAO.Database, wrkdefault As Workspace
         Set wrkdefault = DBEngine.Workspaces(0)

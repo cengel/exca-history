@@ -4,6 +4,12 @@ Private Sub cmdLoadPicture_Click()
 fLoadPicture Me.JGSForm.Form.Image1, , True
 ScrollToHome Me.JGSForm.Form.Image1
 End Sub
+Private Sub button_browser_Click()
+Dim webadress As String
+webadress = Replace(Me![txtImagePath].Value, "\", "/")
+webadress = Replace(webadress, "//", "file://")
+Application.FollowHyperlink webadress, , True
+End Sub
 Private Sub CmdClip_Click()
 With Me.JGSForm.Form.Image1
     If .ImageWidth <= Me.JGSForm.Form.Width - 200 Then
@@ -98,12 +104,31 @@ DoEvents
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_open
-Dim Path, FileName
-Path = sketchpath
+Dim Path, FileName, newfile
+Dim strSQL, fname
+Dim rst As DAO.Recordset
 If Me.OpenArgs <> "" Then
-    FileName = Me.OpenArgs
+strSQL = "SELECT [Unit Number], [Year] FROM [Exca: Unit Sheet] WHERE [Unit Number]=" & Me.OpenArgs & ";"
+Set rst = CurrentDb.OpenRecordset(strSQL)
+Debug.Print rst![Year]
+FileName = Me.OpenArgs
+If rst![Year] < 2015 Then
+    Path = sketchpath
     Path = Path & FileName & ".jpg"
     Me![txtImagePath] = Path
+    Debug.Print Path
+Else
+    Path = sketchpath2015
+    Path = Path & "units\sketches\" & "U" & FileName & "*" & ".jpg"
+    fname = Dir(Path & "*", vbNormal)
+    While fname <> ""
+        newfile = fname
+        fname = Dir()
+    Wend
+    Path = sketchpath2015 & "units\sketches\" & newfile
+    Me![txtImagePath] = Path
+    Debug.Print Path
+End If
     If Dir(Path) = "" Then
             MsgBox "The sketch cannot be found, it may not have been scanned in yet. The database is looking for: " & Path & " please check it exists."
             DoCmd.Close acForm, Me.Name

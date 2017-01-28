@@ -24,7 +24,7 @@ err_Excavation_Click:
 End Sub
 Private Sub Feature_Number_Exit(Cancel As Integer)
 On Error GoTo Err_Feature_Number_Exit
-    Me.Refresh
+    Me.refresh
 Exit_Feature_Number_Exit:
     Exit Sub
 Err_Feature_Number_Exit:
@@ -34,6 +34,7 @@ Err_Feature_Number_Exit:
 End Sub
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 Me![Date changed] = Now()
+Forms![Exca: Feature Sheet]![dbo_Exca: FeatureHistory].Form![lastmodify].Value = Now()
 End Sub
 Private Sub go_next_Click()
 On Error GoTo Err_go_next_Click

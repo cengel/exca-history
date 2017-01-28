@@ -102,6 +102,28 @@ err_reportprob:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdViewBuildingsketch_Click()
+On Error GoTo err_ViewBuildingsketch_Click
+    Dim Path
+    Dim fname, newfile
+    Path = sketchpath2015 & "buildings\sketches\"
+    Path = Path & "B" & Me![Number] & "*" & ".jpg"
+    fname = Dir(Path & "*", vbNormal)
+    While fname <> ""
+        newfile = fname
+        fname = Dir()
+    Wend
+    Path = sketchpath2015 & "buildings\sketches\" & newfile
+    If Dir(Path) = "" Then
+        MsgBox "The sketch plan of this building has not been scanned in yet.", vbInformation, "No Sketch available to view"
+    Else
+        DoCmd.OpenForm "frm_pop_buildingsketch", acNormal, , , acFormReadOnly, , Me![Number]
+    End If
+Exit Sub
+err_ViewBuildingsketch_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub EstProportionofBuildingEx_AfterUpdate()
 On Error GoTo err_est
 If Me![EstProportionofBuildingEx] = "" Or IsNull(Me![EstProportionofBuildingEx]) Then

@@ -12,8 +12,8 @@ err_GetCurrentVersion:
 End Function
 Function SetCurrentVersion()
 On Error GoTo err_SetCurrentVersion
-Dim retVal, centralver
-retVal = "v"
+Dim retval, centralver
+retval = "v"
 If DBName <> "" Then
     Dim mydb As Database, myrs As Recordset
     Dim sql, theVersionNumberLocal
@@ -23,7 +23,7 @@ If DBName <> "" Then
     If Not (myrs.BOF And myrs.EOF) Then
         myrs.MoveFirst
         centralver = myrs![Version_num]
-        retVal = retVal & myrs![Version_num]
+        retval = retval & myrs![Version_num]
         theVersionNumberLocal = VersionNumberLocal
         If InStr(centralver, ",") > 0 Then centralver = Replace(centralver, ",", ".")
         If InStr(theVersionNumberLocal, ",") > 0 Then theVersionNumberLocal = Replace(theVersionNumberLocal, ",", ".")
@@ -42,10 +42,10 @@ If DBName <> "" Then
     mydb.Close
     Set mydb = Nothing
 Else
-    retVal = retVal & "X"
+    retval = retval & "X"
 End If
-VersionNumber = retVal
-SetCurrentVersion = retVal
+VersionNumber = retval
+SetCurrentVersion = retval
 Exit Function
 err_SetCurrentVersion:
     Call General_Error_Trap

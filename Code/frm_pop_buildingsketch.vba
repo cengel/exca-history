@@ -4,12 +4,6 @@ Private Sub cmdLoadPicture_Click()
 fLoadPicture Me.JGSForm.Form.Image1, , True
 ScrollToHome Me.JGSForm.Form.Image1
 End Sub
-Private Sub button_browser_Click()
-Dim webadress As String
-webadress = Replace(Me![txtImagePath].Value, "\", "/")
-webadress = Replace(webadress, "//", "file://")
-Application.FollowHyperlink webadress, , True
-End Sub
 Private Sub CmdClip_Click()
 With Me.JGSForm.Form.Image1
     If .ImageWidth <= Me.JGSForm.Form.Width - 200 Then
@@ -106,15 +100,15 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_open
 Dim Path, FileName, fname, newfile
 If Me.OpenArgs <> "" Then
-    Path = sketchpath2015 & "features\sketches\"
+    Path = sketchpath2015 & "buildings\sketches\"
     FileName = Me.OpenArgs
-    Path = Path & "F" & FileName & "*" & ".jpg"
+    Path = Path & "B" & FileName & "*" & ".jpg"
     fname = Dir(Path & "*", vbNormal)
     While fname <> ""
         newfile = fname
         fname = Dir()
     Wend
-    Path = sketchpath2015 & "features\sketches\" & newfile
+    Path = sketchpath2015 & "buildings\sketches\" & newfile
     Me![txtImagePath] = Path
     If Dir(Path) = "" Then
             MsgBox "The sketch cannot be found, it may not have been scanned in yet. The database is looking for: " & Path & " please check it exists."

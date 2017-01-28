@@ -2,7 +2,7 @@ Option Compare Database   'Use database order for string comparisons
 Option Explicit
 Private Sub Area_name_AfterUpdate()
 On Error GoTo err_Area_name_afterupdate
-Dim msg, retVal
+Dim msg, retval
     If Not IsNull(Me![Area Name].OldValue) Or (Me![Area Name].OldValue <> Me![Area Name]) Then
         msg = "Sorry but edits to the Area name are not allowed. Area names are stored in many different tables "
         msg = msg & "and this name may have already been used." & Chr(13) & Chr(13)
@@ -11,10 +11,10 @@ Dim msg, retVal
         msg = msg & Chr(13) & Chr(13) & "Press Cancel to return to the original Area name"
         msg = msg & Chr(13) & "or "
         msg = msg & "Press OK to change this area name and add the old one to the historical list. "
-        retVal = MsgBox(msg, vbExclamation + vbOKCancel + vbDefaultButton2, "Stop: Area names cannot just be altered")
-        If retVal = vbCancel Then
+        retval = MsgBox(msg, vbExclamation + vbOKCancel + vbDefaultButton2, "Stop: Area names cannot just be altered")
+        If retval = vbCancel Then
             Me![Area Name] = Me![Area Name].OldValue 'reset to oldval
-        ElseIf retVal = vbOK Then
+        ElseIf retval = vbOK Then
             Dim sql, sql2, sql3, newAreaNum
             sql = "INSERT INTO [Exca: Area Sheet] ([Area name], [Mound], [Description]) VALUES ('" & Me![Area Name] & "','" & Me![Mound] & "'," & IIf(IsNull(Me![Description]), "null", "'" & Me![Description] & "'") & ");"
             DoCmd.RunSQL sql

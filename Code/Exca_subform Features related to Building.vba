@@ -1,6 +1,6 @@
 Option Compare Database
 Option Explicit
-Private Sub cmdGoToFeature_Click()
+Private Sub cmdgotofeature_Click()
 On Error GoTo Err_cmdGoToFeature_Click
     Dim stDocName As String
     Dim stLinkCriteria As String

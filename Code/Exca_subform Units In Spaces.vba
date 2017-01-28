@@ -4,7 +4,7 @@ Private Sub cmdGoToSpace_Click()
 On Error GoTo Err_cmdGoToSpace_Click
     Dim stDocName As String
     Dim stLinkCriteria As String
-    Dim checknum, msg, retVal, sql, insertArea, permiss
+    Dim checknum, msg, retval, sql, insertArea, permiss
     stDocName = "Exca: Space Sheet"
     If Not IsNull(Me![txtIn_Space]) Or Me![txtIn_Space] <> "" Then
         checknum = DLookup("[Space Number]", "[Exca: Space Sheet]", "[Space Number] = " & Me![txtIn_Space])
@@ -13,8 +13,8 @@ On Error GoTo Err_cmdGoToSpace_Click
             If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
                 msg = "This Space Number DOES NOT EXIST in the database."
                 msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-                retVal = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
-                If retVal = vbNo Then
+                retval = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
+                If retval = vbNo Then
                     MsgBox "No space record to view, please alert the your team leader about this.", vbExclamation, "Missing Space Record"
                 Else
                     If Forms![Exca: Unit Sheet]![Area] <> "" Then
@@ -74,15 +74,15 @@ err_Form_Open:
 End Sub
 Private Sub txtIn_Space_AfterUpdate()
 On Error GoTo err_txtIn_Space_AfterUpdate
-Dim checknum, msg, retVal, sql, insertArea
+Dim checknum, msg, retval, sql, insertArea
 If Me![txtIn_Space] <> "" Then
     If IsNumeric(Me![txtIn_Space]) Then
         checknum = DLookup("[Space Number]", "[Exca: Space Sheet]", "[Space Number] = " & Me![txtIn_Space])
         If IsNull(checknum) Then
             msg = "This Space Number DOES NOT EXIST in the database, you must remember to enter it."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
+            If retval = vbNo Then
                 MsgBox "Ok, but you must remember to enter it soon otherwise you'll be chased!", vbExclamation, "Remember!"
             Else
                 If Forms![Exca: Unit Sheet]![Area] <> "" Then

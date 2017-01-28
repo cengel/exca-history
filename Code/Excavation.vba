@@ -89,6 +89,18 @@ Err_Feature_Sheet_Button_Click:
     Call General_Error_Trap
     Resume Exit_Feature_Sheet_Button_Click
 End Sub
+Private Sub FeatureStatus_Click()
+On Error GoTo Err_FeatureStatus_Click
+    Dim stDocName As String
+    Dim stLinkCriteria As String
+    stDocName = "FeaturesheetStatus"
+    DoCmd.OpenForm stDocName, , , stLinkCriteria
+Exit_FeatureStatus_Click:
+    Exit Sub
+Err_FeatureStatus_Click:
+    Call General_Error_Trap
+    Resume Exit_FeatureStatus_Click
+End Sub
 Private Sub Form_Open(Cancel As Integer)
 If GetGeneralPermissions = "Admin" Then
     Me![cmdAdmin].Enabled = True

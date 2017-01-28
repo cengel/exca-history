@@ -88,7 +88,7 @@ Select Case Me.Data_Category
 End Select
 End Sub
 Private Sub Data_Category_Exit(Cancel As Integer)
-Me.Refresh
+Me.refresh
 End Sub
 Private Sub Description_AfterUpdate()
     Me.Material = ""

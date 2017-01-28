@@ -18,11 +18,11 @@ err_cmdAddNew_Click:
 End Sub
 Private Sub cmdDelete_Click()
 On Error GoTo Err_cmdDelete_Click
-Dim checkValidAction, checkValidAction2, checkValidAction3, retVal
+Dim checkValidAction, checkValidAction2, checkValidAction3, retval
     checkValidAction = CheckIfLOVValueUsed("Exca:SampleTypeLOV", "SampleType", Me![txtSampleType], "Exca: Samples", "Unit Number", "Sample Type", "delete")
     If checkValidAction = "ok" Then
-                retVal = MsgBox("No records refer to this Type (" & Me![txtSampleType] & ") so deletion is allowed." & Chr(13) & Chr(13) & "Are you sure you want to delete " & Me![txtSampleType] & " from the list of available Types?", vbExclamation + vbYesNo, "Confirm Deletion")
-                If retVal = vbYes Then
+                retval = MsgBox("No records refer to this Type (" & Me![txtSampleType] & ") so deletion is allowed." & Chr(13) & Chr(13) & "Are you sure you want to delete " & Me![txtSampleType] & " from the list of available Types?", vbExclamation + vbYesNo, "Confirm Deletion")
+                If retval = vbYes Then
                     Me.AllowDeletions = True
                     DoCmd.RunCommand acCmdDeleteRecord
                     Me.AllowDeletions = False
@@ -40,14 +40,14 @@ Err_cmdDelete_Click:
 End Sub
 Private Sub cmdEdit_Click()
 On Error GoTo Err_cmdEdit_Click
-Dim checkValidAction, checkValidAction2, checkValidAction3, retVal
+Dim checkValidAction, checkValidAction2, checkValidAction3, retval
     checkValidAction = CheckIfLOVValueUsed("Exca:SampleTypeLOV", "SampleType", Me![txtSampleType], "Exca: Samples", "Unit Number", "Sample Type", "edit")
     If checkValidAction = "ok" Then
-                retVal = InputBox("No records refer to this Sample Type (" & Me![txtSampleType] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Sample Type that you wish to replace this entry with:", "Enter edited Type")
-                If retVal <> "" Then
-                    Me![txtSampleType] = retVal
-                    retVal = InputBox("If there a default amount for this Sample Type (" & Me![txtSampleType] & ")." & Chr(13) & Chr(13) & "Leave this blank if there is not and press ok", "Default Amount")
-                    Me![txtSampleAmount] = retVal
+                retval = InputBox("No records refer to this Sample Type (" & Me![txtSampleType] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Sample Type that you wish to replace this entry with:", "Enter edited Type")
+                If retval <> "" Then
+                    Me![txtSampleType] = retval
+                    retval = InputBox("If there a default amount for this Sample Type (" & Me![txtSampleType] & ")." & Chr(13) & Chr(13) & "Leave this blank if there is not and press ok", "Default Amount")
+                    Me![txtSampleAmount] = retval
                 End If
     ElseIf checkValidAction = "fail" Then
         MsgBox "Sorry but the system has been unable to check whether this value is used by any dependant tables, please contact the DBA", vbCritical, "Integrity Check Failed"

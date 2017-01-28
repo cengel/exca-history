@@ -2,14 +2,14 @@ Option Compare Database
 Option Explicit
 Function LogUserIn_OLD()
 On Error GoTo err_LogUserIn_OLD
-Dim username, pwd, retVal
+Dim username, pwd, retval
 getuser:
     username = InputBox("Please enter your database LOGIN NAME:", "Login Name")
     If username = "" Then 'either the entered blank or pressed Cancel
         username = InputBox("The system cannot continue without your database login name. " & Chr(13) & Chr(13) & "Please enter your database LOGIN NAME below:", "Login Name")
         If username = "" Then 'again no entry
-            retVal = MsgBox("Sorry but the system cannot continue without a LOGIN NAME. Do you want to try again?", vbCritical + vbYesNo, "Login required")
-            If retVal = vbYes Then 'try again, loop back up
+            retval = MsgBox("Sorry but the system cannot continue without a LOGIN NAME. Do you want to try again?", vbCritical + vbYesNo, "Login required")
+            If retval = vbYes Then 'try again, loop back up
                 GoTo getuser
             Else 'no, don't try again so quit system
                 MsgBox "The system will now quit", vbCritical + vbOKOnly, "Invalid Login"
@@ -22,8 +22,8 @@ getpwd:
     If pwd = "" Then 'either the entered blank or pressed Cancel
         pwd = InputBox("The system cannot continue without your database password. " & Chr(13) & Chr(13) & "Please enter your database PASSWORD below:", "Password")
         If pwd = "" Then 'again no entry
-            retVal = MsgBox("Sorry but the system cannot continue without a PASSWORD. Do you want to try again?", vbCritical + vbYesNo, "Password required")
-            If retVal = vbYes Then 'try again, loop back up
+            retval = MsgBox("Sorry but the system cannot continue without a PASSWORD. Do you want to try again?", vbCritical + vbYesNo, "Password required")
+            If retval = vbYes Then 'try again, loop back up
                 GoTo getpwd
             Else 'no, don't try again so quit system
                 MsgBox "The system will now quit", vbCritical + vbOKOnly, "Invalid Login"
@@ -50,8 +50,8 @@ LogUserIn_OLD = True
 Exit Function
 err_LogUserIn_OLD:
     If Err.Number = 3059 Then
-        retVal = MsgBox("Sorry but the login you have given is incorrect or the database/internet connection is not available. You cannot connect to the database. Do you wish to try logging in again?", vbCritical + vbYesNo, "Login Failure")
-        If retVal = vbYes Then Resume
+        retval = MsgBox("Sorry but the login you have given is incorrect or the database/internet connection is not available. You cannot connect to the database. Do you wish to try logging in again?", vbCritical + vbYesNo, "Login Failure")
+        If retval = vbYes Then Resume
     ElseIf Err.Number = 3151 Then
         AlterODBC
     Else
@@ -91,7 +91,7 @@ cleanup:
 End Function
 Function LogUserIn(username As String, pwd As String)
 On Error GoTo err_LogUserIn
-Dim retVal
+Dim retval
 If username <> "" And pwd <> "" Then
     Dim mydb As DAO.Database, I, errmsg, connStr
     Dim tmptable As TableDef
@@ -141,12 +141,12 @@ err_LogUserIn:
         errmsg = errmsg & "2. There is no ODBC connection to the database setup on this computer." & Chr(13) & "    See http://www.catalhoyuk.com/database/odbc.html for details." & Chr(13) & Chr(13)
         errmsg = errmsg & "3. Your computer is not connected to the Internet at this time." & Chr(13) & Chr(13)
         errmsg = errmsg & "Do you wish to try logging in again?"
-        retVal = MsgBox(errmsg, vbCritical + vbYesNo, "Login Failure")
-        If retVal = vbYes Then
+        retval = MsgBox(errmsg, vbCritical + vbYesNo, "Login Failure")
+        If retval = vbYes Then
             GoTo cleanup 'used to be resume before querydef intro, now just cleanup and leave so user can try again
         Else
-            retVal = MsgBox("Are you really sure you want to quit and close the system?", vbCritical + vbYesNo, "Confirm System Closure")
-            If retVal = vbNo Then
+            retval = MsgBox("Are you really sure you want to quit and close the system?", vbCritical + vbYesNo, "Confirm System Closure")
+            If retval = vbNo Then
                 GoTo cleanup 'on 2nd thoughts the user doesn't want to quit so now just cleanup and leave so user can try again
             Else
                 MsgBox "The system will now quit" & Chr(13) & Chr(13) & "The error reported was: " & Err.Description, vbCritical, "Login Failure"

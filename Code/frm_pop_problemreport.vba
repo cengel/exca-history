@@ -79,7 +79,7 @@ Dim colonpos
             Me![cboSelect].RowSource = "Select [unit number] from [Exca: Unit Sheet] ORDER BY [unit number];"
             If entitynum <> "" Then Me![lblEntity].Caption = "Unit Number: " & entitynum
         End Select
-        Me.Refresh
+        Me.refresh
 Else
     Me![lblTitle].Visible = False
     Me![lblEntity].Visible = False

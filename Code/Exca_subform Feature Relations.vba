@@ -2,6 +2,7 @@ Option Compare Database
 Option Explicit
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 Me![Date changed] = Now()
+Forms![Exca: Feature Sheet]![dbo_Exca: FeatureHistory].Form![lastmodify].Value = Now()
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
@@ -23,15 +24,15 @@ err_Form_Open:
 End Sub
 Private Sub To_feature_AfterUpdate()
 On Error GoTo err_To_feature_AfterUpdate
-Dim checknum, msg, retVal, sql, currentFeature, checknum2, featureRel, checknum3, myrs As DAO.Recordset, mydb As DAO.Database
+Dim checknum, msg, retval, sql, currentFeature, checknum2, featureRel, checknum3, myrs As DAO.Recordset, mydb As DAO.Database
 If Me![To_feature] <> "" Then
     If IsNumeric(Me![To_feature]) Then
         checknum = DLookup("[Feature Number]", "[Exca: Features]", "[Feature Number] = " & Me![To_feature])
         If IsNull(checknum) Then
             msg = "The Feature Number " & Me![To_feature] & " DOES NOT EXIST in the database. The system can enter it for you ready for you to update later."
             msg = msg & Chr(13) & Chr(13) & "Would you like the system to create this feature number now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Feature Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Feature Number does not exist")
+            If retval = vbNo Then
                 MsgBox "Ok, but you must remember to enter it soon otherwise you'll be chased!", vbExclamation, "Remember!"
             Else
                 currentFeature = Me![Feature Number]
@@ -55,9 +56,12 @@ If Me![To_feature] <> "" Then
                     Set mydb = CurrentDb
                     Set myrs = mydb.OpenRecordset(sql, dbOpenSnapshot)
                     If myrs.EOF And myrs.BOF Then
+                        Dim response
                         msg = "This entry is not allowed because these two features are not currently in the same Space. They must be in the same space to create a relationship."
-                        msg = msg & Chr(13) & Chr(13) & "This entry cannot be allowed. Please double check this issue with your Supervisor."
-                        MsgBox msg, vbExclamation, "Space mis-match"
+                        msg = msg & Chr(13) & Chr(13) & "Are you sure that " & Parent![Feature Number] & " is " & Me![Relation] & " " & Me![To_feature] & "?"
+                        response = MsgBox(msg, vbYesNo + vbQuestion, "Space mis-match")
+                        If response = vbYes Then
+                        Else
                         If Not IsNull(Me![To_feature].OldValue) Then
                             Me![To_feature] = Me![To_feature].OldValue
                             DoCmd.GoToControl "To_Feature"
@@ -69,6 +73,7 @@ If Me![To_feature] <> "" Then
                 End If
             End If
         End If
+    End If
     Else
         MsgBox "The Feature number is invalid, please enter a numeric value only", vbInformation, "Invalid Entry"
     End If

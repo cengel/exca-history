@@ -32,7 +32,7 @@ Err_open_skell_Click:
 End Sub
 Private Sub To_Unit_AfterUpdate()
 On Error GoTo err_To_Unit_AfterUpdate
-Dim checknum, msg, retVal, checknum2
+Dim checknum, msg, retval, checknum2
 If Me![To_Unit] <> "" Then
     If IsNumeric(Me![To_Unit]) Then
         checknum = DLookup("[Unit Number]", "[Exca: Unit Sheet]", "[Unit Number] = " & Me![To_Unit])

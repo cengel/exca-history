@@ -4,7 +4,7 @@ Private Sub open_details_Click()
 On Error GoTo Err_open_details_Click
     Dim stDocName As String
     Dim stLinkCriteria As String
-    Me.Refresh
+    Me.refresh
     stDocName = "Exca: Graphics list"
     stLinkCriteria = "[Graphic Number]=" & "'" & Me![Graphic Number] & "'"
     DoCmd.OpenForm stDocName, , , stLinkCriteria

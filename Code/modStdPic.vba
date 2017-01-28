@@ -319,7 +319,6 @@ If Len(strfName & vbNullString) = 0 Then
       "Please Select a Valid JPEG or GIF File"
     End If
 End If
-Application.Screen.MousePointer = 11
 Select Case right$(strfName, 3)
     Case "bmp", "dib", "Gif", "emf", "Wmf", "ico", "cur", "jpg"
     Set hPic = LoadPicture(strfName)

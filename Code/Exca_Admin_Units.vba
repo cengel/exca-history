@@ -21,43 +21,43 @@ err_cboFind:
 End Sub
 Private Sub cmdReNumber_Click()
 On Error GoTo err_cmdReNumber
-    Dim retVal, findUnit, sql, response, msg
-    retVal = InputBox("Please enter the new number for Unit " & Me![txtUnitNumber] & "?", "Enter new unit number")
-    If retVal <> "" Then
-        If Not IsNumeric(retVal) Then
+    Dim retval, findUnit, sql, response, msg
+    retval = InputBox("Please enter the new number for Unit " & Me![txtUnitNumber] & "?", "Enter new unit number")
+    If retval <> "" Then
+        If Not IsNumeric(retval) Then
             MsgBox "Invalid Unit number, please try again", vbExclamation, "Action Cancelled"
             Exit Sub
         End If
-        findUnit = DLookup("[Unit Number]", "[Exca: Unit Sheet]", "[Unit number] = " & retVal)
+        findUnit = DLookup("[Unit Number]", "[Exca: Unit Sheet]", "[Unit number] = " & retval)
         If Not IsNull(findUnit) Then
-            MsgBox "Sorry but the unit number " & retVal & " already exists. You must delete it first before you can alter " & Me![txtUnitNumber], vbExclamation, "Unit already exists"
+            MsgBox "Sorry but the unit number " & retval & " already exists. You must delete it first before you can alter " & Me![txtUnitNumber], vbExclamation, "Unit already exists"
             Exit Sub
         Else
-            msg = "Are you quite sure that you want to renumber Unit " & Me![txtUnitNumber] & " to " & retVal & "?"
+            msg = "Are you quite sure that you want to renumber Unit " & Me![txtUnitNumber] & " to " & retval & "?"
             response = MsgBox(msg, vbCritical + vbYesNoCancel, "Confirm Unit Re-Number")
             If response = vbYes Then
                 Dim mydb As DAO.Database, wrkdefault As Workspace, wrkdefault1 As Workspace
                 Set mydb = CurrentDb
-                Call RenumARecord("Exca: Unit Sheet", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: Units in Features", "Unit", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: Units in Spaces", "Unit", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: Unit Interpretive Categories", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: Unit Data Categories", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: Dimensions", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Unit Sheet", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Units in Features", "Unit", retval, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Units in Spaces", "Unit", retval, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Unit Interpretive Categories", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Unit Data Categories", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Dimensions", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
                 If LCase(Me![txtCategory]) = "skeleton" Then
-                    Call RenumARecord("Exca: Skeleton data", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
-                    Call RenumARecord("Exca: skeletons same as", "skell_unit", retVal, Me![txtUnitNumber], False, mydb)
-                    Call RenumARecord("Exca: skeletons same as", "to_unit", retVal, Me![txtUnitNumber], False, mydb)
+                    Call RenumARecord("Exca: Skeleton data", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
+                    Call RenumARecord("Exca: skeletons same as", "skell_unit", retval, Me![txtUnitNumber], False, mydb)
+                    Call RenumARecord("Exca: skeletons same as", "to_unit", retval, Me![txtUnitNumber], False, mydb)
                 ElseIf LCase(Me![txtCategory]) = "cut" Then
-                    Call RenumARecord("Exca: descriptions cut", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                    Call RenumARecord("Exca: descriptions cut", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
                 Else
-                    Call RenumARecord("Exca: descriptions layer", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                    Call RenumARecord("Exca: descriptions layer", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
                 End If
-               Call RenumARecord("Exca: stratigraphy", "Unit", retVal, Me![txtUnitNumber], False, mydb)
-               Call RenumARecord("Exca: stratigraphy", "to_Units", retVal, Me![txtUnitNumber], True, mydb)
-                Call RenumARecord("Exca: graphics list", "Unit", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: samples", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: X-Finds: Basic data", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+               Call RenumARecord("Exca: stratigraphy", "Unit", retval, Me![txtUnitNumber], False, mydb)
+               Call RenumARecord("Exca: stratigraphy", "to_Units", retval, Me![txtUnitNumber], True, mydb)
+                Call RenumARecord("Exca: graphics list", "Unit", retval, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: samples", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: X-Finds: Basic data", "Unit Number", retval, Me![txtUnitNumber], False, mydb)
                 mydb.Close
                 Set mydb = Nothing
                 MsgBox "Renumbering has been successful"
@@ -78,16 +78,16 @@ Private Sub Excavation_Click()
 End Sub
 Private Sub cmdEdit_Click()
 On Error GoTo Err_cmdEdit_Click
-Dim checkValidAction, checkValidAction2, checkValidAction3, retVal
+Dim checkValidAction, checkValidAction2, checkValidAction3, retval
     checkValidAction = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "Level", "edit")
     If checkValidAction = "ok" Then
         checkValidAction2 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelStart", "edit")
         If checkValidAction2 = "ok" Then
             checkValidAction3 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelEnd", "edit")
             If checkValidAction3 = "ok" Then
-                retVal = InputBox("No records refer to this Level (" & Me![txtLevel] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Level that you wish to replace this entry with:", "Enter edited Level")
-                If retVal <> "" Then
-                    Me![txtLevel] = retVal
+                retval = InputBox("No records refer to this Level (" & Me![txtLevel] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Level that you wish to replace this entry with:", "Enter edited Level")
+                If retval <> "" Then
+                    Me![txtLevel] = retval
                 End If
             ElseIf checkValidAction3 = "fail" Then
                 MsgBox "Sorry but the system has been unable to check whether this value is used by any dependant tables, please contact the DBA", vbCritical, "Integrity Check Failed"
@@ -113,9 +113,9 @@ End Sub
 Private Sub cmdDelete_Click()
 On Error GoTo Err_cmdDelete_Click
 Dim UFeature, USpace, UBuilding, UIntCat, UDataCat, UDim, UCatSpecific, UStrat, USkelSame, UGrap, USamp, UXfind
-Dim retVal, msg, msg1
-retVal = MsgBox("You have selected to delete Unit number: " & Me![txtUnitNumber] & ". The system will now check what additional data exists for this Unit and will prompt you again before deleting it." & Chr(13) & Chr(13) & "Are you sure you want to continue?", vbCritical + vbYesNo, "Confirm Action")
-If retVal = vbYes Then
+Dim retval, msg, msg1
+retval = MsgBox("You have selected to delete Unit number: " & Me![txtUnitNumber] & ". The system will now check what additional data exists for this Unit and will prompt you again before deleting it." & Chr(13) & Chr(13) & "Are you sure you want to continue?", vbCritical + vbYesNo, "Confirm Action")
+If retval = vbYes Then
     UFeature = AdminDeletionCheck("Exca: Units in Features", "Unit", Me![txtUnitNumber], "Related to Feature", "In_Feature")
     USpace = AdminDeletionCheck("Exca: Units in Spaces", "Unit", Me![txtUnitNumber], "Related to Space", "In_Space")
     UBuilding = AdminDeletionCheck("Exca: Units in Buildings", "Unit", Me![txtUnitNumber], "Related to Building", "In_Building")
@@ -157,8 +157,8 @@ If retVal = vbYes Then
         msg = msg1 & msg
     End If
     msg = msg & Chr(13) & Chr(13) & "Are you quite sure that you want to permanently delete Unit " & Me![txtUnitNumber] & "?"
-    retVal = MsgBox(msg, vbCritical + vbYesNoCancel, "Confirm Permanent Deletion")
-    If retVal = vbYes Then
+    retval = MsgBox(msg, vbCritical + vbYesNoCancel, "Confirm Permanent Deletion")
+    If retval = vbYes Then
         MsgBox "This can take a while and looks like it has hung, just let it run until a msg comes up"
         On Error Resume Next
         Dim mydb As DAO.Database, wrkdefault As Workspace

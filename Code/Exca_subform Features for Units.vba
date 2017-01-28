@@ -22,7 +22,7 @@ Private Sub go_to_feature_Click()
 On Error GoTo Err_go_to_feature_Click
     Dim stDocName As String
     Dim stLinkCriteria As String
-    Dim checknum, msg, retVal, sql, insertArea, permiss
+    Dim checknum, msg, retval, sql, insertArea, permiss
     stDocName = "Exca: Feature Sheet"
     If Not IsNull(Me![In_feature]) Or Me![In_feature] <> "" Then
         checknum = DLookup("[Feature Number]", "[Exca: Features]", "[Feature Number] = " & Me![In_feature])
@@ -31,8 +31,8 @@ On Error GoTo Err_go_to_feature_Click
             If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
                 msg = "This Feature Number DOES NOT EXIST in the database."
                 msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-                retVal = MsgBox(msg, vbInformation + vbYesNo, "Feature Number does not exist")
-                If retVal = vbNo Then
+                retval = MsgBox(msg, vbInformation + vbYesNo, "Feature Number does not exist")
+                If retval = vbNo Then
                     MsgBox "No feature record to view, please alert the your team leader about this.", vbExclamation, "Missing Feature Record"
                 Else
                     If Forms![Exca: Unit Sheet]![Area] <> "" Then
@@ -62,15 +62,15 @@ Err_go_to_feature_Click:
 End Sub
 Private Sub In_feature_AfterUpdate()
 On Error GoTo err_In_feature_AfterUpdate
-Dim checknum, msg, retVal, sql, insertArea
+Dim checknum, msg, retval, sql, insertArea
 If Me![In_feature] <> "" Then
     If IsNumeric(Me![In_feature]) Then
         checknum = DLookup("[Feature Number]", "[Exca: Features]", "[Feature Number] = " & Me![In_feature])
         If IsNull(checknum) Then
             msg = "This Feature Number DOES NOT EXIST in the database, you must remember to enter it."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Feature Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Feature Number does not exist")
+            If retval = vbNo Then
                 MsgBox "Ok, but you must remember to enter it soon otherwise you'll be chased!", vbExclamation, "Remember!"
             Else
                 If Forms![Exca: Unit Sheet]![Area] <> "" Then

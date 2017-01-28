@@ -68,19 +68,19 @@ err_Form_Open:
 End Sub
 Private Sub frmLevelCertain_AfterUpdate()
 On Error GoTo err_frmLevelCertain_AfterUpdate
-Dim retVal
+Dim retval
 If Me![frmLevelCertain] = -1 Then
     If Me![cboUncertainLevelStart] <> "" And Me![cboUnCertainLevelEnd] <> "" Then
-        retVal = MsgBox("Do you want the Start Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
-        If retVal = vbYes Then
+        retval = MsgBox("Do you want the Start Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
+        If retval = vbYes Then
             Me![Level] = Me![cboUncertainLevelStart]
         Else
-            retVal = MsgBox("Do you want the End Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
-            If retVal = vbYes Then
+            retval = MsgBox("Do you want the End Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
+            If retval = vbYes Then
                 Me![Level] = Me![cboUnCertainLevelEnd]
             Else
-                retVal = MsgBox("The start and end level fields will now be cleared and you will have to select the Certain level from that list. Are you sure you want to continue?", vbQuestion + vbYesNo, "Uncertain Levels will be cleared")
-                If retVal = vbYes Then
+                retval = MsgBox("The start and end level fields will now be cleared and you will have to select the Certain level from that list. Are you sure you want to continue?", vbQuestion + vbYesNo, "Uncertain Levels will be cleared")
+                If retval = vbYes Then
                     Me![cboUncertainLevelStart] = ""
                     Me![cboUnCertainLevelEnd] = ""
                 Else
@@ -89,12 +89,12 @@ If Me![frmLevelCertain] = -1 Then
             End If
         End If
     ElseIf Me![cboUncertainLevelStart] <> "" Then
-        retVal = MsgBox("Do you want the Start Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
-        If retVal = vbYes Then Me![Level] = Me![cboUncertainLevelStart]
+        retval = MsgBox("Do you want the Start Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
+        If retval = vbYes Then Me![Level] = Me![cboUncertainLevelStart]
         Me![cboUncertainLevelStart] = ""
     ElseIf Me![cboUnCertainLevelEnd] <> "" Then
-        retVal = MsgBox("Do you want the End Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
-        If retVal = vbYes Then Me![Level] = Me![cboUnCertainLevelEnd]
+        retval = MsgBox("Do you want the End Level to become the certain level for this FT?", vbQuestion + vbYesNo, "Set Level")
+        If retval = vbYes Then Me![Level] = Me![cboUnCertainLevelEnd]
         Me![cboUnCertainLevelEnd] = ""
     End If
     If Me![frmLevelCertain] = -1 Then 'they have decide not to change their mind

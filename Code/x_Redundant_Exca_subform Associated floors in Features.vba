@@ -2,7 +2,8 @@ Option Compare Database
 Option Explicit
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 On Error GoTo err_Form_BeforeUpdate
-    Me![Date changed] = Now()
+Me![Date changed] = Now()
+Forms![Exca: Feature Sheet]![dbo_Exca: FeatureHistory].Form![lastmodify].Value = Now()
 Exit Sub
 err_Form_BeforeUpdate:
     Call General_Error_Trap
@@ -24,7 +25,7 @@ err_Form_Open:
 End Sub
 Private Sub Unit_AfterUpdate()
 On Error GoTo err_Unit_AfterUpdate
-Dim checknum, msg, retVal, checknum2
+Dim checknum, msg, retval, checknum2
 If Me![Unit] <> "" Then
     If IsNumeric(Me![Unit]) Then
         checknum = DLookup("[Unit Number]", "[Exca: Unit Sheet]", "[Unit Number] = " & Me![Unit])

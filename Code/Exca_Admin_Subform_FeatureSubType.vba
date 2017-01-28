@@ -2,11 +2,11 @@ Option Compare Database
 Option Explicit
 Private Sub cmdDelete_Click()
 On Error GoTo Err_cmdDelete_Click
-Dim checkValidAction, retVal
+Dim checkValidAction, retval
         checkValidAction = CheckIfLOVValueUsed("Exca:SubFeatureTypeLOV", "FeatureSubType", Me![txtFeatureSubType], "Exca: Features", "Feature Number", "FeatureSubType", "delete", " AND [Feature Type] = '" & Forms![Exca: Admin_FeatureTypeSubTypeLOV]![txtFeatureType] & "'")
         If checkValidAction = "ok" Then
-            retVal = MsgBox("No records refer to this Feature SubType (" & Me![txtFeatureSubType] & ") so deletion is allowed." & Chr(13) & Chr(13) & "Are you sure you want to delete " & Me![txtFeatureSubType] & " from the list of available Feature Subtypes?", vbExclamation + vbYesNo, "Confirm Deletion")
-            If retVal = vbYes Then
+            retval = MsgBox("No records refer to this Feature SubType (" & Me![txtFeatureSubType] & ") so deletion is allowed." & Chr(13) & Chr(13) & "Are you sure you want to delete " & Me![txtFeatureSubType] & " from the list of available Feature Subtypes?", vbExclamation + vbYesNo, "Confirm Deletion")
+            If retval = vbYes Then
                 Me.AllowDeletions = True
                 DoCmd.RunCommand acCmdDeleteRecord
                 Me.AllowDeletions = False
@@ -24,12 +24,12 @@ Err_cmdDelete_Click:
 End Sub
 Private Sub cmdEdit_Click()
 On Error GoTo Err_cmdEdit_Click
-Dim checkValidAction, retVal
+Dim checkValidAction, retval
     checkValidAction = CheckIfLOVValueUsed("Exca:SubFeatureTypeLOV", "FeatureSubType", Me![txtFeatureSubType], "Exca: Features", "Feature Number", "FeatureSubType", "edit", " AND [Feature Type] = '" & Forms![Exca: Admin_FeatureTypeSubTypeLOV]![txtFeatureType] & "'")
     If checkValidAction = "ok" Then
-        retVal = InputBox("No records refer to this Feature sub type (" & Me![txtFeatureSubType] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Feature Sub Type that you wish to replace this entry with:", "Enter edited Feature Sub Type")
-        If retVal <> "" Then
-            Me![txtFeatureSubType] = retVal
+        retval = InputBox("No records refer to this Feature sub type (" & Me![txtFeatureSubType] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Feature Sub Type that you wish to replace this entry with:", "Enter edited Feature Sub Type")
+        If retval <> "" Then
+            Me![txtFeatureSubType] = retval
         End If
     ElseIf checkValidAction = "fail" Then
         MsgBox "Sorry but the system has been unable to check whether this value is used by any dependant tables, please contact the DBA", vbCritical, "Integrity Check Failed"
@@ -45,10 +45,10 @@ End Sub
 Private Sub cmdNewSubType_Click()
 On Error GoTo err_cmdNewSubType_Click
     If Forms![Exca: Admin_FeatureTypeSubTypeLOV]![FeatureTypeID] <> "" Then
-        Dim sql, retVal
-        retVal = InputBox("Please enter the new subtype for the feature type '" & Forms![Exca: Admin_FeatureTypeSubTypeLOV]![FeatureType] & "': ", "Enter new subtype")
-        If retVal <> "" Then
-            sql = "INSERT INTO [Exca:FeatureSubTypeLOV] ([FeatureTypeID], [FeatureSubType]) VALUES (" & Forms![Exca: Admin_FeatureTypeSubTypeLOV]![FeatureTypeID] & ", '" & retVal & "');"
+        Dim sql, retval
+        retval = InputBox("Please enter the new subtype for the feature type '" & Forms![Exca: Admin_FeatureTypeSubTypeLOV]![FeatureType] & "': ", "Enter new subtype")
+        If retval <> "" Then
+            sql = "INSERT INTO [Exca:FeatureSubTypeLOV] ([FeatureTypeID], [FeatureSubType]) VALUES (" & Forms![Exca: Admin_FeatureTypeSubTypeLOV]![FeatureTypeID] & ", '" & retval & "');"
             DoCmd.RunSQL sql
             Me.Requery
         End If

@@ -8,7 +8,7 @@ DoCmd.OpenForm "Excavation_Login", acNormal, , , acFormEdit, acDialog
 SetCurrentVersion
 SetCurrentYear
 DoCmd.OpenForm "Excavation", acNormal, , , acFormReadOnly 'open main menu
-Forms![Excavation].Refresh
+Forms![Excavation].refresh
 Exit Function
 err_startup:
     Call General_Error_Trap

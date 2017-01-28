@@ -2,6 +2,7 @@ Option Compare Database
 Option Explicit
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 Me![Date changed] = Now()
+Forms![Exca: Feature Sheet]![dbo_Exca: FeatureHistory].Form![lastmodify].Value = Now()
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open

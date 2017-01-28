@@ -13,16 +13,16 @@ Private Sub Excavation_Click()
 End Sub
 Private Sub cmdEdit_Click()
 On Error GoTo Err_cmdEdit_Click
-Dim checkValidAction, checkValidAction2, checkValidAction3, retVal
+Dim checkValidAction, checkValidAction2, checkValidAction3, retval
     checkValidAction = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "Level", "edit")
     If checkValidAction = "ok" Then
         checkValidAction2 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelStart", "edit")
         If checkValidAction2 = "ok" Then
             checkValidAction3 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelEnd", "edit")
             If checkValidAction3 = "ok" Then
-                retVal = InputBox("No records refer to this Level (" & Me![txtLevel] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Level that you wish to replace this entry with:", "Enter edited Level")
-                If retVal <> "" Then
-                    Me![txtLevel] = retVal
+                retval = InputBox("No records refer to this Level (" & Me![txtLevel] & ") so an edit is allowed." & Chr(13) & Chr(13) & "Please enter the edited Level that you wish to replace this entry with:", "Enter edited Level")
+                If retval <> "" Then
+                    Me![txtLevel] = retval
                 End If
             ElseIf checkValidAction3 = "fail" Then
                 MsgBox "Sorry but the system has been unable to check whether this value is used by any dependant tables, please contact the DBA", vbCritical, "Integrity Check Failed"
@@ -47,15 +47,15 @@ Err_cmdEdit_Click:
 End Sub
 Private Sub cmdDelete_Click()
 On Error GoTo Err_cmdDelete_Click
-Dim checkValidAction, checkValidAction2, checkValidAction3, retVal
+Dim checkValidAction, checkValidAction2, checkValidAction3, retval
     checkValidAction = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "Level", "delete")
     If checkValidAction = "ok" Then
         checkValidAction2 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelStart", "delete")
         If checkValidAction2 = "ok" Then
             checkValidAction3 = CheckIfLOVValueUsed("Exca:LevelLOV", "Level", Me![txtLevel], "Exca: Space Sheet", "Space Number", "UncertainLevelEnd", "delete")
             If checkValidAction3 = "ok" Then
-                retVal = MsgBox("No records refer to this Level (" & Me![txtLevel] & ") so deletion is allowed." & Chr(13) & Chr(13) & "Are you sure you want to delete " & Me![txtLevel] & " from the list of available levels?", vbExclamation + vbYesNo, "Confirm Deletion")
-                If retVal = vbYes Then
+                retval = MsgBox("No records refer to this Level (" & Me![txtLevel] & ") so deletion is allowed." & Chr(13) & Chr(13) & "Are you sure you want to delete " & Me![txtLevel] & " from the list of available levels?", vbExclamation + vbYesNo, "Confirm Deletion")
+                If retval = vbYes Then
                     Me.AllowDeletions = True
                     DoCmd.RunCommand acCmdDeleteRecord
                     Me.AllowDeletions = False

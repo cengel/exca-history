@@ -15,7 +15,7 @@ Case "cut"
     Me![Exca: Unit Data Categories CUT subform]![Material] = ""
     Me![Exca: Unit Data Categories CUT subform]![Deposition] = ""
     Me![Exca: Unit Data Categories CUT subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -32,7 +32,7 @@ Case "layer"
     Me![Exca: Unit Data Categories LAYER subform]![Material] = ""
     Me![Exca: Unit Data Categories LAYER subform]![Deposition] = ""
     Me![Exca: Unit Data Categories LAYER subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -49,7 +49,7 @@ Case "cluster"
     Me![Exca: Unit Data Categories CLUSTER subform]![Material] = ""
     Me![Exca: Unit Data Categories CLUSTER subform]![Deposition] = ""
     Me![Exca: Unit Data Categories CLUSTER subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -64,7 +64,7 @@ Case "skeleton"
     Me![Exca: Unit Data Categories SKELL subform]![Material] = ""
     Me![Exca: Unit Data Categories SKELL subform]![Deposition] = ""
     Me![Exca: Unit Data Categories SKELL subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = True
     Me![subform Unit: stratigraphy  same as].Visible = False
     Me![Exca: Subform Layer descr].Visible = False
@@ -157,7 +157,7 @@ Case "cut"
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = True
     Me![Exca: Unit Data Categories CUT subform]![Data Category] = "cut"
-    Me.Refresh
+    Me.refresh
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
 Case "cluster"
@@ -168,7 +168,7 @@ Case "cluster"
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = True
     Me![Exca: Unit Data Categories CLUSTER subform]![Data Category] = "cluster"
-    Me.Refresh
+    Me.refresh
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
 Case "skeleton"
@@ -176,7 +176,7 @@ Case "skeleton"
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
     Me![Exca: Unit Data Categories SKELL subform]![Data Category] = "skeleton"
-    Me.Refresh
+    Me.refresh
     Me![layer desc].Visible = False
     Me![cut desc].Visible = False
     Me![skell desc].Visible = True
@@ -337,7 +337,7 @@ Err_skell_desc_Click:
 End Sub
 Private Sub Unit_number_Exit(Cancel As Integer)
 On Error GoTo Err_Unit_number_Exit
-    Me.Refresh
+    Me.refresh
 Exit_Unit_number_Exit:
     Exit Sub
 Err_Unit_number_Exit:

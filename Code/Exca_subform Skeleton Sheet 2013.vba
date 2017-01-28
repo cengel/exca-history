@@ -196,7 +196,7 @@ err_Form_Open:
 End Sub
 Private Sub Unit_number_Exit(Cancel As Integer)
 On Error GoTo Err_Unit_number_Exit
-    Me.Refresh
+    Me.refresh
 Exit_Unit_number_Exit:
     Exit Sub
 Err_Unit_number_Exit:

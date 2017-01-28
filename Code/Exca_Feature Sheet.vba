@@ -4,15 +4,15 @@ Sub Close_Feature_Sheet_Click()
 End Sub
 Private Sub Building_AfterUpdate()
 On Error GoTo err_Building_AfterUpdate
-Dim checknum, msg, retVal
+Dim checknum, msg, retval
 If Me![Building] <> "" Then
     If IsNumeric(Me![Building]) Then
         checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![Building])
         If IsNull(checknum) Then
             msg = "This Building Number DOES NOT EXIST in the database, you must remember to enter it."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
+            If retval = vbNo Then
                 MsgBox "Ok, but you must remember to enter it soon otherwise you'll be chased!", vbExclamation, "Remember!"
             Else
                 DoCmd.OpenForm "Exca: Building Sheet", acNormal, , , acFormAdd, acDialog, "NEW,Num:" & Me![Building] & ",Area:" & Me![Combo27]
@@ -63,7 +63,7 @@ err_cmdAddNew_Click:
 End Sub
 Private Sub cmdGoToBuilding_Click()
 On Error GoTo Err_cmdGoToBuilding_Click
-Dim checknum, msg, retVal, permiss
+Dim checknum, msg, retval, permiss
 If Not IsNull(Me![Building]) Or Me![Building] <> "" Then
     checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![Building])
     If IsNull(checknum) Then
@@ -71,8 +71,8 @@ If Not IsNull(Me![Building]) Or Me![Building] <> "" Then
         If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
             msg = "This Building Number DOES NOT EXIST in the database."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
+            If retval = vbNo Then
                 MsgBox "No building record to view, please alert the your team leader about this.", vbExclamation, "Missing Building Record"
             Else
                 DoCmd.OpenForm "Exca: Building Sheet", acNormal, , , acFormAdd, acDialog, "NEW,Num:" & Me![Building] & ",Area:" & Me![Combo27]
@@ -165,8 +165,15 @@ End Sub
 Private Sub cmdViewFeaturematrix_Click()
 On Error GoTo err_ViewFeaturematrix
     Dim Path
-    Path = sketchpath & "Features\Matrices\"
-    Path = Path & Me![Feature Number] & ".jpg"
+    Dim fname
+    Path = sketchpath2015 & "features\matrices\"
+    Path = Path & "F" & Me![Feature Number] & "*" & ".jpg"
+    fname = Dir(Path & "*", vbNormal)
+    While fname <> ""
+        Debug.Print fname
+        fname = Dir()
+    Wend
+    Path = sketchpath2015 & "features\matrices\" & fname
     If Dir(Path) = "" Then
         MsgBox "The sketch plan of this unit has not been scanned in yet.", vbInformation, "No Sketch available to view"
     Else
@@ -180,8 +187,15 @@ End Sub
 Private Sub cmdViewFeaturesketch_Click()
 On Error GoTo err_ViewFeaturesketch
     Dim Path
-    Path = sketchpath & "Features\Sketches\"
-    Path = Path & Me![Feature Number] & ".jpg"
+    Dim fname
+    Path = sketchpath2015 & "features\sketches\"
+    Path = Path & "F" & Me![Feature Number] & "*" & ".jpg"
+    fname = Dir(Path & "*", vbNormal)
+    While fname <> ""
+        fname = Dir()
+    Wend
+    Path = sketchpath2015 & "features\sketches\" & fname
+    Debug.Print Path
     If Dir(Path) = "" Then
         MsgBox "The sketch plan of this unit has not been scanned in yet.", vbInformation, "No Sketch available to view"
     Else
@@ -271,6 +285,7 @@ If IsNull(Me![Exca: subform Feature Plans].Form![Graphic Number]) Then
     End If
 End If
 Me![Date changed] = Now()
+Forms![Exca: Feature Sheet]![dbo_Exca: FeatureHistory].Form![lastmodify].Value = Now()
 Exit Sub
 err_Form_BeforeUpdate:
     Call General_Error_Trap
@@ -435,4 +450,16 @@ End Sub
 Private Sub New_entry_Click()
 End Sub
 Sub find_feature_Click()
+End Sub
+Private Sub print_bulk_Click()
+On Error GoTo Err_print_bulk_Click
+    Dim stDocName As String
+    Dim stLinkCriteria As String
+    stDocName = "print_bulk_features"
+    DoCmd.OpenForm stDocName, , , stLinkCriteria
+Exit_print_bulk_Click:
+    Exit Sub
+Err_print_bulk_Click:
+    Call General_Error_Trap
+    Resume Exit_print_bulk_Click
 End Sub

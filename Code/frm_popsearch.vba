@@ -96,7 +96,7 @@ Dim existing, colonpos
             Me![cboSelect].RowSource = "Select [unit number] from [Exca: Unit Sheet] ORDER BY [unit number];"
             If existing <> "" Then Me![txtToFind] = existing
         End Select
-        Me.Refresh
+        Me.refresh
     End If
 Exit Sub
 err_open:

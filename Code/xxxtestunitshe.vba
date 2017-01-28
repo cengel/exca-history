@@ -12,15 +12,15 @@ err_Area_AfterUpdate:
 End Sub
 Private Sub Building_AfterUpdate()
 On Error GoTo err_Building_AfterUpdate
-Dim checknum, msg, retVal, sql
+Dim checknum, msg, retval, sql
 If Me![Building] <> "" Then
     If IsNumeric(Me![Building]) Then
         checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![Building])
         If IsNull(checknum) Then
             msg = "This Building Number DOES NOT EXIST in the database, you must remember to enter it."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
+            If retval = vbNo Then
                 MsgBox "Ok, but you must remember to enter it soon otherwise you'll be chased!", vbExclamation, "Remember!"
             Else
                 sql = "INSERT INTO [Exca: Building Details] ([Number]) VALUES (" & Me![Building] & ");"
@@ -55,7 +55,7 @@ Case "cut"
     Me![Exca: Unit Data Categories CUT subform]![Material] = ""
     Me![Exca: Unit Data Categories CUT subform]![Deposition] = ""
     Me![Exca: Unit Data Categories CUT subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -73,7 +73,7 @@ Case "layer"
     Me![Exca: Unit Data Categories LAYER subform]![Material] = ""
     Me![Exca: Unit Data Categories LAYER subform]![Deposition] = ""
     Me![Exca: Unit Data Categories LAYER subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -91,7 +91,7 @@ Case "cluster"
     Me![Exca: Unit Data Categories CLUSTER subform]![Material] = ""
     Me![Exca: Unit Data Categories CLUSTER subform]![Deposition] = ""
     Me![Exca: Unit Data Categories CLUSTER subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -107,7 +107,7 @@ Case "skeleton"
     Me![Exca: Unit Data Categories SKELL subform]![Material] = ""
     Me![Exca: Unit Data Categories SKELL subform]![Deposition] = ""
     Me![Exca: Unit Data Categories SKELL subform]![basal spit] = ""
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = True
     Me![subform Unit: stratigraphy  same as].Visible = False
     Me![Exca: Subform Layer descr].Visible = False
@@ -144,7 +144,7 @@ err_cmdAddNew_Click:
 End Sub
 Private Sub cmdGoToBuilding_Click()
 On Error GoTo Err_cmdGoToBuilding_Click
-Dim checknum, msg, retVal, sql, permiss
+Dim checknum, msg, retval, sql, permiss
 If Not IsNull(Me![Building]) Or Me![Building] <> "" Then
     checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![Building])
     If IsNull(checknum) Then
@@ -152,8 +152,8 @@ If Not IsNull(Me![Building]) Or Me![Building] <> "" Then
         If permiss = "ADMIN" Or permiss = "RW" Then
             msg = "This Building Number DOES NOT EXIST in the database."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
+            If retval = vbNo Then
                 MsgBox "No Building record to view, please alert the your team leader about this.", vbExclamation, "Missing Building Record"
             Else
                 sql = "INSERT INTO [Exca: Building Details] ([Number]) VALUES (" & Me![Building] & ");"
@@ -178,7 +178,7 @@ Err_cmdGoToBuilding_Click:
 End Sub
 Private Sub cmdGoToSpace_Click()
 On Error GoTo Err_cmdGoToSpace_Click
-Dim checknum, msg, retVal, sql, permiss
+Dim checknum, msg, retval, sql, permiss
 If Not IsNull(Me![Space]) Or Me![Space] <> "" Then
     checknum = DLookup("[Space Number]", "[Exca: Space Sheet]", "[Space Number] = '" & Me![Space] & "'")
     If IsNull(checknum) Then
@@ -186,8 +186,8 @@ If Not IsNull(Me![Space]) Or Me![Space] <> "" Then
         If permiss = "ADMIN" Or permiss = "RW" Then
             msg = "This Space Number DOES NOT EXIST in the database."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
+            If retval = vbNo Then
                 MsgBox "No Space record to view, please alert the your team leader about this.", vbExclamation, "Missing Building Record"
             Else
                 sql = "INSERT INTO [Exca: Space Sheet] ([Space Number]) VALUES ('" & Me![Space] & "');"
@@ -361,7 +361,7 @@ Case "cut"
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
     Me![Exca: Unit Data Categories CUT subform].Visible = True
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -372,7 +372,7 @@ Case "cluster"
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = True
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
@@ -381,7 +381,7 @@ Case "skeleton"
     Me![Exca: Unit Data Categories CUT subform].Visible = False
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = False
-    Me.Refresh
+    Me.refresh
     Me![Exca: subform Skeleton Sheet].Visible = True
     Me![subform Unit: stratigraphy  same as].Visible = False
     Me![Exca: Subform Layer descr].Visible = False
@@ -632,15 +632,15 @@ err_Priority_Unit_Click:
 End Sub
 Private Sub Space_AfterUpdate()
 On Error GoTo err_Space_AfterUpdate
-Dim checknum, msg, retVal, sql
+Dim checknum, msg, retval, sql
 If Me![Space] <> "" Then
     If IsNumeric(Me![Space]) Then
         checknum = DLookup("[Space Number]", "[Exca: Space Sheet]", "[Space Number] = '" & Me![Space] & "'")
         If IsNull(checknum) Then
             msg = "This Space Number DOES NOT EXIST in the database, you must remember to enter it."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
-            If retVal = vbNo Then
+            retval = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
+            If retval = vbNo Then
                 MsgBox "Ok, but you must remember to enter it soon otherwise you'll be chased!", vbExclamation, "Remember!"
             Else
                 sql = "INSERT INTO [Exca: Space Sheet] ([Space Number]) VALUES ('" & Me![Space] & "');"
