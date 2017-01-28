@@ -204,7 +204,7 @@ err_frmLevelCertain_AfterUpdate:
     Call General_Error_Trap
     Exit Sub
 End Sub
-Private Sub Level_NotInList(NewData As String, Response As Integer)
+Private Sub Level_NotInList(NewData As String, response As Integer)
 End Sub
 Private Sub Space_number_AfterUpdate()
 On Error GoTo err_Space_Number_AfterUpdate

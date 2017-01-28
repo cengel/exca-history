@@ -134,3 +134,24 @@ Set myq = mydb.CreateQueryDef("")
 myq.Close
 Set myq = Nothing
 End Sub
+Sub RenumARecord(FromTable, FieldName, newNum, oldNum, Text, mydb)
+Dim sql, myq As QueryDef
+Set myq = mydb.CreateQueryDef("")
+        If Text = False Then
+            If FromTable = "Exca: graphics list" Then 'graphics needs to define if feature num or unit
+                If FieldName = "Unit" Then
+                    sql = "UPDATE [" & FromTable & "] SET [Unit/feature number] = " & newNum & " WHERE [Unit/feature number]=" & oldNum & " AND lcase([Feature/Unit]) =  'u';"
+                ElseIf FieldName = "Feature" Then
+                    sql = "UPDATE [" & FromTable & "] SET [Unit/feature number] = " & newNum & " WHERE [Unit/feature number]=" & oldNum & " AND lcase([Feature/Unit]) =  'f';"
+                End If
+            Else
+                sql = "UPDATE [" & FromTable & "] SET [" & FromTable & "].[" & FieldName & "] = " & newNum & " WHERE [" & FromTable & "].[" & FieldName & "]=" & oldNum & ";"
+            End If
+        Else
+            sql = "UPDATE [" & FromTable & "] SET [" & FromTable & "].[" & FieldName & "] = '" & newNum & "' WHERE [" & FromTable & "].[" & FieldName & "]='" & oldNum & "';"
+        End If
+        myq.sql = sql
+        myq.Execute
+myq.Close
+Set myq = Nothing
+End Sub

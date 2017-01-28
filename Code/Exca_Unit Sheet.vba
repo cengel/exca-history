@@ -179,8 +179,25 @@ End Sub
 Private Sub cmdGoToImage_Click()
 On Error GoTo err_cmdGoToImage_Click
 Dim mydb As DAO.Database
-Dim tmptable As TableDef, tblConn, I, msg
+Dim tmptable As TableDef, tblConn, I, msg, fldid
 Set mydb = CurrentDb
+    Dim myq1 As QueryDef, connStr
+    Set mydb = CurrentDb
+    Set myq1 = mydb.CreateQueryDef("")
+    myq1.Connect = mydb.TableDefs(0).Connect & ";UID=portfolio;PWD=portfolio"
+    myq1.ReturnsRecords = True
+    myq1.sql = "sp_Portfolio_GetUnitFieldID " & Me![Year]
+    Dim myrs As Recordset
+    Set myrs = myq1.OpenRecordset
+    If myrs.Fields(0).Value = "" Or myrs.Fields(0).Value = 0 Then
+        fldid = 0
+    Else
+        fldid = myrs.Fields(0).Value
+    End If
+    myrs.Close
+    Set myrs = Nothing
+    myq1.Close
+    Set myq1 = Nothing
     For I = 0 To mydb.TableDefs.count - 1 'loop the tables collection
     Set tmptable = mydb.TableDefs(I)
     If tmptable.Connect <> "" Then
@@ -190,7 +207,7 @@ Set mydb = CurrentDb
     Next I
     If tblConn <> "" Then
         If InStr(tblConn, "catalsql") = 0 Then
-            DoCmd.OpenForm "Image_Display", acNormal, , "[Unit] = '" & Me![Unit Number] & "'", acFormReadOnly, acDialog
+            DoCmd.OpenForm "Image_Display", acNormal, , "[StringValue] = '" & Me![Unit Number] & "' AND [Field_ID] = " & fldid, acFormReadOnly, acDialog, Me![Year]
         Else
             msg = "As you are working remotely the system will have to display the images in a web browser." & Chr(13) & Chr(13)
             msg = msg & "At present this part of the website is secure, you must enter following details to gain access:" & Chr(13) & Chr(13)
@@ -366,7 +383,7 @@ Me![Definition].TabStop = True
 Me![Execution].TabStop = True
 Me![Condition].TabStop = True
 Dim imageCount, Imgcaption
-imageCount = DCount("[Unit]", "Image_Metadata_Units", "[Unit] = '" & Me![Unit Number] & "'")
+        imageCount = 0
 If imageCount > 0 Then
     Imgcaption = imageCount
     If imageCount = 1 Then

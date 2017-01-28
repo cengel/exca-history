@@ -19,6 +19,61 @@ err_cboFind:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdReNumber_Click()
+On Error GoTo err_cmdReNumber
+    Dim retVal, findUnit, sql, response, msg
+    retVal = InputBox("Please enter the new number for Unit " & Me![txtUnitNumber] & "?", "Enter new unit number")
+    If retVal <> "" Then
+        If Not IsNumeric(retVal) Then
+            MsgBox "Invalid Unit number, please try again", vbExclamation, "Action Cancelled"
+            Exit Sub
+        End If
+        findUnit = DLookup("[Unit Number]", "[Exca: Unit Sheet]", "[Unit number] = " & retVal)
+        If Not IsNull(findUnit) Then
+            MsgBox "Sorry but the unit number " & retVal & " already exists. You must delete it first before you can alter " & Me![txtUnitNumber], vbExclamation, "Unit already exists"
+            Exit Sub
+        Else
+            msg = "Are you quite sure that you want to renumber Unit " & Me![txtUnitNumber] & " to " & retVal & "?"
+            response = MsgBox(msg, vbCritical + vbYesNoCancel, "Confirm Unit Re-Number")
+            If response = vbYes Then
+                Dim mydb As DAO.Database, wrkdefault As Workspace, wrkdefault1 As Workspace
+                Set mydb = CurrentDb
+                Call RenumARecord("Exca: Unit Sheet", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Units in Features", "Unit", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Units in Spaces", "Unit", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Units in Buildings", "Unit", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Unit Interpretive Categories", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Unit Data Categories", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: Dimensions", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                If LCase(Me![txtCategory]) = "skeleton" Then
+                    Call RenumARecord("Exca: Skeleton data", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                    Call RenumARecord("Exca: skeletons same as", "skell_unit", retVal, Me![txtUnitNumber], False, mydb)
+                    Call RenumARecord("Exca: skeletons same as", "to_unit", retVal, Me![txtUnitNumber], False, mydb)
+                ElseIf LCase(Me![txtCategory]) = "cut" Then
+                    Call RenumARecord("Exca: descriptions cut", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                Else
+                    Call RenumARecord("Exca: descriptions layer", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                End If
+               Call RenumARecord("Exca: stratigraphy", "Unit", retVal, Me![txtUnitNumber], False, mydb)
+               Call RenumARecord("Exca: stratigraphy", "to_Units", retVal, Me![txtUnitNumber], True, mydb)
+                Call RenumARecord("Exca: graphics list", "Unit", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: samples", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                Call RenumARecord("Exca: X-Finds: Basic data", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
+                mydb.Close
+                Set mydb = Nothing
+                MsgBox "Renumbering has been successful"
+            Else
+                MsgBox "Re-numbering cancelled", vbInformation, "Action Cancelled"
+            End If
+        End If
+    Else
+        MsgBox "No unit number entered, action cancelled"
+    End If
+Exit Sub
+err_cmdReNumber:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub Excavation_Click()
     DoCmd.Close acForm, Me.Name
 End Sub
@@ -105,6 +160,7 @@ If retVal = vbYes Then
     msg = msg & Chr(13) & Chr(13) & "Are you quite sure that you want to permanently delete Unit " & Me![txtUnitNumber] & "?"
     retVal = MsgBox(msg, vbCritical + vbYesNoCancel, "Confirm Permanent Deletion")
     If retVal = vbYes Then
+        MsgBox "This can take a while and looks like it has hung, just let it run until a msg comes up"
         On Error Resume Next
         Dim mydb As DAO.Database, wrkdefault As Workspace
         Set wrkdefault = DBEngine.Workspaces(0)
@@ -142,7 +198,13 @@ If retVal = vbYes Then
             Me![cboFind].Requery
         Else
             wrkdefault.Rollback
-            MsgBox "A problem has occured and the deletion has been cancelled. The error message is: " & Err.Description
+            msg = "A problem has occured and the deletion has been cancelled. " & Chr(13) & Chr(13)
+            msg = msg & "SHAHINA this often fails if there is Plan/Section info, Skeleton Sameas data and Stratigraphy data present. You have delete from these tables manually first:"
+            msg = msg & Chr(13) & Chr(13) & "Exca: Graphics list - all references to this unit in unit/feature number field" & Chr(13)
+            msg = msg & Chr(13) & Chr(13) & "Exca: Stratigraphy - all references to this unit in both unit and to_units fields" & Chr(13)
+            msg = msg & Chr(13) & Chr(13) & "(if it is a skeleton) Exca: Skeleton same as  - all references to this unit in skell_unit and to_unit fields" & Chr(13)
+            msg = msg & Chr(13) & Chr(13) & "then come back here and try again...sorry...system error follows: " & Err.Description
+            MsgBox msg
         End If
         mydb.Close
         Set mydb = Nothing

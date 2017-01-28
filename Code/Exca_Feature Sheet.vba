@@ -195,18 +195,18 @@ err_Form_Current:
     Call General_Error_Trap
     Exit Sub
 End Sub
-Private Sub Form_Error(DataErr As Integer, Response As Integer)
+Private Sub Form_Error(DataErr As Integer, response As Integer)
 Dim msg
 If DataErr = 3162 Then
     msg = "An error has occurred: invalid entry in the current field, probably a null value." & Chr(13) & Chr(13)
     msg = msg & "The system will attempt to resolve this, please re-try the action, but if you continue to get an error press the ESC key."
     MsgBox msg, vbInformation, "Error encountered"
-    Response = acDataErrContinue
+    response = acDataErrContinue
     SendKeys "{ESC}"
     SendKeys "{ESC}"
 ElseIf DataErr = 3146 Then
     DoCmd.RunCommand acCmdUndo
-    Response = acDataErrContinue
+    response = acDataErrContinue
 End If
 End Sub
 Private Sub Form_Open(Cancel As Integer)

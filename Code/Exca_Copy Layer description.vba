@@ -21,14 +21,14 @@ err_cboFindUnitToCopy_AfterUpdate:
 End Sub
 Private Sub copy_data_Click()
 On Error GoTo Err_copy_data_Click
-Dim msg, Style, Title, Response
+Dim msg, Style, Title, response
 msg = "This action will replace the unit sheet (" & Me![Text17] & ") "
 msg = msg & "data with with that of unit " & Me![Unit Number] & " shown here." & Chr(13) & Chr(13)
 msg = msg & "This action cannot be undone. Do you want to continue?"   ' Define message.
 Style = vbYesNo + vbQuestion + vbDefaultButton2 ' Define buttons.
 Title = "Overwriting Records"  ' Define title.
-Response = MsgBox(msg, Style, Title)
-If Response = vbYes Then    ' User chose Yes.
+response = MsgBox(msg, Style, Title)
+If response = vbYes Then    ' User chose Yes.
     Forms![Exca: Unit Sheet]![Exca: Subform Layer descr]![Consistency] = Me![Consistency]
     Forms![Exca: Unit Sheet]![Exca: Subform Layer descr]![Colour] = Me![Colour]
     Forms![Exca: Unit Sheet]![Exca: Subform Layer descr]![Texture] = Me![Texture]
