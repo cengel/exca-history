@@ -184,6 +184,7 @@ Case "cut"
     Me![Exca: Unit Data Categories CUT subform]![basal spit] = ""
     Me.Refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
+    Me![Exca: subform Skeleton Sheet 2013].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False
@@ -202,6 +203,7 @@ Case "layer"
     Me![Exca: Unit Data Categories LAYER subform]![basal spit] = ""
     Me.Refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
+    Me![Exca: subform Skeleton Sheet 2013].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False
@@ -220,27 +222,50 @@ Case "cluster"
     Me![Exca: Unit Data Categories CLUSTER subform]![basal spit] = ""
     Me.Refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
+    Me![Exca: subform Skeleton Sheet 2013].Visible = False
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False
 Case "skeleton"
-    Me![Exca: Unit Data Categories CUT subform].Visible = False
-    Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
-    Me![Exca: Unit Data Categories LAYER subform].Visible = False
-    Me![Exca: Unit Data Categories SKELL subform]![Data Category] = "skeleton"
-    Me![Exca: Unit Data Categories SKELL subform]![In Situ] = ""
-    Me![Exca: Unit Data Categories SKELL subform]![Location] = ""
-    Me![Exca: Unit Data Categories SKELL subform]![Description] = ""
-    Me![Exca: Unit Data Categories SKELL subform]![Material] = ""
-    Me![Exca: Unit Data Categories SKELL subform]![Deposition] = ""
-    Me![Exca: Unit Data Categories SKELL subform]![basal spit] = ""
-    Me.Refresh
-    Me![Exca: subform Skeleton Sheet].Visible = True
-    Me![subform Unit: stratigraphy  same as].Visible = False
-    Me![Exca: Subform Layer descr].Visible = False
-    Me![Exca: Subform Cut descr].Visible = False
-    Me![Exca: subform Skeletons same as].Visible = True
-    Me![Exca: Unit Data Categories SKELL subform].Visible = True
+    If Forms![Exca: Unit Sheet]!Year < 2013 Then
+        Me![Exca: Unit Data Categories CUT subform].Visible = False
+        Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
+        Me![Exca: Unit Data Categories LAYER subform].Visible = False
+        Me![Exca: Unit Data Categories SKELL subform]![Data Category] = "skeleton"
+        Me![Exca: Unit Data Categories SKELL subform]![In Situ] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Location] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Description] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Material] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Deposition] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![basal spit] = ""
+        Me.Refresh
+        Me![Exca: subform Skeleton Sheet].Visible = True
+        Me![Exca: subform Skeleton Sheet 2013].Visible = False
+        Me![subform Unit: stratigraphy  same as].Visible = False
+        Me![Exca: Subform Layer descr].Visible = False
+        Me![Exca: Subform Cut descr].Visible = False
+        Me![Exca: subform Skeletons same as].Visible = True
+        Me![Exca: Unit Data Categories SKELL subform].Visible = True
+    Else
+        Me![Exca: Unit Data Categories CUT subform].Visible = False
+        Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
+        Me![Exca: Unit Data Categories LAYER subform].Visible = False
+        Me![Exca: Unit Data Categories SKELL subform]![Data Category] = "skeleton"
+        Me![Exca: Unit Data Categories SKELL subform]![In Situ] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Location] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Description] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Material] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![Deposition] = ""
+        Me![Exca: Unit Data Categories SKELL subform]![basal spit] = ""
+        Me.Refresh
+        Me![Exca: subform Skeleton Sheet].Visible = False
+        Me![Exca: subform Skeleton Sheet 2013].Visible = True
+        Me![subform Unit: stratigraphy  same as].Visible = False
+        Me![Exca: Subform Layer descr].Visible = False
+        Me![Exca: Subform Cut descr].Visible = False
+        Me![Exca: subform Skeletons same as].Visible = True
+        Me![Exca: Unit Data Categories SKELL subform].Visible = True
+    End If
 End Select
 Exit Sub
 Err_Category_AfterUpdate:
@@ -593,6 +618,8 @@ err_Excavation_Click:
     MsgBox Err.Description
     Resume Exit_Excavation_Click
 End Sub
+Private Sub Exca__subform_Skeleton_Sheet_Enter()
+End Sub
 Private Sub FastTrack_Click()
 On Error GoTo err_FastTrack_Click
 Exit Sub
@@ -701,6 +728,7 @@ Case "layer"
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = True
     Me![Exca: subform Skeleton Sheet].Visible = False
+    Me![Exca: subform Skeleton Sheet 2013].Visible = False 'skelli 2013
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False
@@ -712,6 +740,7 @@ Case "cut"
     Me![Exca: Unit Data Categories CUT subform].Visible = True
     Me.Refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
+    Me![Exca: subform Skeleton Sheet 2013].Visible = False 'skelli 2013
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False
@@ -723,25 +752,46 @@ Case "cluster"
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = True
     Me.Refresh
     Me![Exca: subform Skeleton Sheet].Visible = False
+    Me![Exca: subform Skeleton Sheet 2013].Visible = False 'skelli 2013
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False
 Case "skeleton"
-    Me![Exca: Unit Data Categories CUT subform].Visible = False
-    Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
-    Me![Exca: Unit Data Categories LAYER subform].Visible = False
-    Me.Refresh
-    Me![Exca: subform Skeleton Sheet].Visible = True
-    Me![subform Unit: stratigraphy  same as].Visible = False
-    Me![Exca: Subform Layer descr].Visible = False
-    Me![Exca: Subform Cut descr].Visible = False
-    Me![Exca: subform Skeletons same as].Visible = True
-    Me![Exca: Unit Data Categories SKELL subform].Visible = True
-    Me![Description].TabStop = False
-    Me![Recognition].TabStop = False
-    Me![Definition].TabStop = False
-    Me![Execution].TabStop = False
-    Me![Condition].TabStop = False
+    If Me![Year] < 2013 Then
+        Me![Exca: Unit Data Categories CUT subform].Visible = False
+        Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
+        Me![Exca: Unit Data Categories LAYER subform].Visible = False
+        Me.Refresh
+        Me![Exca: subform Skeleton Sheet].Visible = True
+        Me![Exca: subform Skeleton Sheet 2013].Visible = False
+        Me![subform Unit: stratigraphy  same as].Visible = False
+        Me![Exca: Subform Layer descr].Visible = False
+        Me![Exca: Subform Cut descr].Visible = False
+        Me![Exca: subform Skeletons same as].Visible = True
+        Me![Exca: Unit Data Categories SKELL subform].Visible = True
+        Me![Description].TabStop = False
+        Me![Recognition].TabStop = False
+        Me![Definition].TabStop = False
+        Me![Execution].TabStop = False
+        Me![Condition].TabStop = False
+    Else
+        Me![Exca: Unit Data Categories CUT subform].Visible = False
+        Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
+        Me![Exca: Unit Data Categories LAYER subform].Visible = False
+        Me.Refresh
+        Me![Exca: subform Skeleton Sheet].Visible = False
+        Me![Exca: subform Skeleton Sheet 2013].Visible = True
+        Me![subform Unit: stratigraphy  same as].Visible = False
+        Me![Exca: Subform Layer descr].Visible = False
+        Me![Exca: Subform Cut descr].Visible = False
+        Me![Exca: subform Skeletons same as].Visible = True
+        Me![Exca: Unit Data Categories SKELL subform].Visible = True
+        Me![Description].TabStop = False
+        Me![Recognition].TabStop = False
+        Me![Definition].TabStop = False
+        Me![Execution].TabStop = False
+        Me![Condition].TabStop = False
+    End If
 Case Else
     Me![Exca: Subform Layer descr].Visible = True
     Me![Exca: Subform Cut descr].Visible = False
@@ -749,6 +799,7 @@ Case Else
     Me![Exca: Unit Data Categories CLUSTER subform].Visible = False
     Me![Exca: Unit Data Categories LAYER subform].Visible = True
     Me![Exca: subform Skeleton Sheet].Visible = False
+    Me![Exca: subform Skeleton Sheet 2013].Visible = False 'skelli 2013
     Me![subform Unit: stratigraphy  same as].Visible = True
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False

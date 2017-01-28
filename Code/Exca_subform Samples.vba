@@ -12,6 +12,12 @@ err_Amount:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub Amount__ltrs__AfterUpdate()
+End Sub
+Private Sub Amount__ltrs__Change()
+End Sub
+Private Sub Amount__ltrs__LostFocus()
+End Sub
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 End Sub
 Private Sub Form_Open(Cancel As Integer)
