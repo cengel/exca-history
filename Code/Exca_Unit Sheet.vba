@@ -427,7 +427,7 @@ On Error GoTo Err_cmdGoToFT_Click
     Dim checknum, msg, retVal, sql, insertArea, permiss
     stDocName = "Exca: Admin_Foundation_Trenches"
     If Not IsNull(Me![cboFT]) Or Me![cboFT] <> "" Then
-        stLinkCriteria = "[FTName]='" & Me![cboFT] & "'"
+        stLinkCriteria = "[FTName]='" & Me![cboFT] & "' AND [Area] = '" & Me![Area] & "'"
         DoCmd.OpenForm stDocName, acNormal, , stLinkCriteria, acFormReadOnly
     Else
         MsgBox "No FT record to view", vbInformation, "No FT Name"
@@ -703,6 +703,8 @@ Dim Path
 Path = sketchpath
 Path = Path & Me![Unit Number] & ".jpg"
         Me!cmdViewSketch.Enabled = True
+Me![cmdGoToImage].Enabled = False
+Me!cmdViewSketch.Enabled = False
 Select Case Me.Category
 Case "layer"
     Me![Exca: Subform Layer descr].Visible = True

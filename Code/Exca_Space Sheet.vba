@@ -260,6 +260,7 @@ backhere:
 Imgcaption = "Images of Space"
 Me![cmdGoToImage].Caption = Imgcaption
 Me![cmdGoToImage].Enabled = True
+Me![cmdGoToImage].Enabled = False
 If Me!chkExternal = True Then
     Me![Exca: subform Phases related to Space].Enabled = True
     Me![Exca: subform Phases related to Space].Locked = False

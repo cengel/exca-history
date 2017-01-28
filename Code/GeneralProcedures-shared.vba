@@ -16,7 +16,7 @@ Dim retVal, centralver
 retVal = "v"
 If DBName <> "" Then
     Dim mydb As Database, myrs As Recordset
-    Dim sql
+    Dim sql, theVersionNumberLocal
     Set mydb = CurrentDb()
     sql = "SELECT [Version_Num] FROM [Database_Interface_Version_History] WHERE [MDB_Name] = '" & DBName & "' AND not isnull([DATE_RELEASED]) ORDER BY [Version_Num] DESC;"
     Set myrs = mydb.OpenRecordset(sql, dbOpenSnapshot)
@@ -24,11 +24,14 @@ If DBName <> "" Then
         myrs.MoveFirst
         centralver = myrs![Version_num]
         retVal = retVal & myrs![Version_num]
-        If centralver <> VersionNumberLocal Then
+        theVersionNumberLocal = VersionNumberLocal
+        If InStr(centralver, ",") > 0 Then centralver = Replace(centralver, ",", ".")
+        If InStr(theVersionNumberLocal, ",") > 0 Then theVersionNumberLocal = Replace(theVersionNumberLocal, ",", ".")
+        If CDbl(centralver) <> CDbl(theVersionNumberLocal) Then
             Dim msg
             msg = "There is a new version of the Excavation database file available. " & Chr(13) & Chr(13) & _
                     "Please close this copy now and run 'Update Databases.bat' on your desktop or " & _
-                    "copy the file 'Excavation Central Database.mdb' from G:\2009 Central Server Databases " & _
+                    "copy the file 'Excavation Central Database.mdb' from G:\" & Year(Date) & " Central Server Databases " & _
                     " into the 'New Database Files folder' on your desktop." & Chr(13) & Chr(13) & "If you do not do this" & _
                     " you may experience problems using this database and you will not be able to utilise any new functionaility that has been added."
             MsgBox msg, vbExclamation + vbOKOnly, "New version available"

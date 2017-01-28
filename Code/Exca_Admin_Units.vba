@@ -176,7 +176,7 @@ If retVal = vbYes Then
                 Call DeleteARecord("Exca: skeletons same as", "skell_unit", Me![txtUnitNumber], False, mydb)
                 Call DeleteARecord("Exca: skeletons same as", "to_unit", Me![txtUnitNumber], False, mydb)
             ElseIf LCase(Me![txtCategory]) = "cut" Then
-                Call DeleteARecord("Exca: description cut", "Unit Number", Me![txtUnitNumber], False, mydb)
+                Call DeleteARecord("Exca: descriptions cut", "Unit Number", Me![txtUnitNumber], False, mydb)
             Else
                 Call DeleteARecord("Exca: descriptions layer", "Unit Number", Me![txtUnitNumber], False, mydb)
             End If
