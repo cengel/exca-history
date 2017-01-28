@@ -8,6 +8,14 @@ Err_cmdBuildings_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdCleaning_Click()
+On Error GoTo Err_cmdCleaning_Click
+    DoCmd.OpenForm "Excavation:AdminCleaningMenu", acNormal
+    Exit Sub
+Err_cmdCleaning_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cmdClose_Click()
 On Error GoTo err_cmdClose_Click
     Dim stDocName As String
@@ -36,11 +44,43 @@ Err_cmdFeatureType_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdFT_Click()
+On Error GoTo err_cmdFT_Click
+    DoCmd.OpenForm "Exca: Admin_Foundation_Trenches", acNormal
+    Exit Sub
+err_cmdFT_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdHPhase_Click()
+On Error GoTo err_cmdHPhase_Click
+    DoCmd.OpenForm "Exca: Admin_HodderPhaseLOV", acNormal
+    Exit Sub
+err_cmdHPhase_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cmdLevel_Click()
 On Error GoTo Err_cmdLevel_Click
     DoCmd.OpenForm "Exca: Admin_LevelLOV", acNormal
     Exit Sub
 Err_cmdLevel_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdProblem_Click()
+On Error GoTo Err_cmdLevel_Click
+    DoCmd.OpenForm "Exca: Admin_ProblemReports", acNormal
+    Exit Sub
+Err_cmdLevel_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdSampleTypes_Click()
+On Error GoTo Err_cmdSampleTypes_Click
+    DoCmd.OpenForm "Exca: Admin_SampleTypesLOV", acNormal
+    Exit Sub
+Err_cmdSampleTypes_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
@@ -80,6 +120,18 @@ cmdSpace_Click
 End Sub
 Private Sub Command33_Click()
 cmdBuildings_Click
+End Sub
+Private Sub Command35_Click()
+cmdFT_Click
+End Sub
+Private Sub Command37_Click()
+cmdCleaning_Click
+End Sub
+Private Sub Command39_Click()
+cmdProblem_Click
+End Sub
+Private Sub Command42_Click()
+cmdHPhase_Click
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open

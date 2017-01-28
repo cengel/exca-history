@@ -90,9 +90,8 @@ If retVal = vbYes Then
         Set wrkdefault = DBEngine.Workspaces(0)
         Set mydb = CurrentDb
         wrkdefault.BeginTrans
-        If FUnit <> "" Then Call DeleteARecord("Exca: Units in Features", "Feature", Me![txtFeatureNumber], False, mydb)
+        If FUnit <> "" Then Call DeleteARecord("Exca: Units in Features", "In_Feature", Me![txtFeatureNumber], False, mydb)
         If FSpace <> "" Then Call DeleteARecord("Exca: Features in Spaces", "Feature", Me![txtFeatureNumber], False, mydb)
-        If FBuilding <> "" Then Call DeleteARecord("Exca: Features in Buildings", "Feature", Me![txtFeatureNumber], False, mydb)
         If FRelation <> "" Then Call DeleteARecord("Exca: Feature Relations", "Feature Number", Me![txtFeatureNumber], False, mydb)
         If FRelation2 <> "" Then Call DeleteARecord("Exca: Feature Relations", "To_Feature", Me![txtFeatureNumber], False, mydb)
         If FFloor <> "" Then Call DeleteARecord("Exca: Floors Assoc with Features", "Feature_Number", Me![txtFeatureNumber], False, mydb)

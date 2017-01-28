@@ -5,13 +5,25 @@ On Error GoTo err_Current
 Dim newStr, newstr2, zeronum, FileName
 newStr = Replace(Me![Path], ":", "\")
 newstr2 = newStr
+Dim dirpath, breakid
 zeronum = 10 - (Len(Me![Record_ID]))
 FileName = "p"
         Do While zeronum > 0
             FileName = FileName & "0"
             zeronum = zeronum - 1
         Loop
-newstr2 = newstr2 & "\" & FileName & Me![Record_ID] & ".jpg"
+FileName = FileName & Me![Record_ID]
+breakid = Left(FileName, 3)
+breakid = Mid(FileName, 2, 2) 'chop off leading p
+dirpath = breakid & "\"
+breakid = Mid(FileName, 4, 2)
+dirpath = dirpath & breakid & "\"
+breakid = Mid(FileName, 6, 2)
+dirpath = dirpath & breakid & "\"
+breakid = Mid(FileName, 8, 2)
+dirpath = dirpath & breakid & "\"
+newstr2 = newstr2 & "\" & dirpath & FileName & ".jpg"
+Me!txtFullPath = newstr2
 Me!Image145.Picture = newstr2
 Exit Sub
 err_Current:
@@ -29,10 +41,10 @@ err_Current:
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 If Me.OpenArgs <> "" Then
-    If Me.OpenArgs = 2007 Then
-        Me.RecordSource = "Select * from view_Portfolio_2007Previews WHERE " & Me.Filter
-    Else
-        Me.RecordSource = "Select * from view_Portfolio_Upto2007Previews WHERE " & Me.Filter
+    Me.RecordSource = "Select * from view_Portfolio_Previews_2008 WHERE " & Me.Filter
+    If Me.RecordsetClone.RecordCount <= 0 Then
+        MsgBox "No images have been found in the Portfolio catalogue for this entity", vbInformation, "No images to display"
+        DoCmd.Close acForm, Me.Name
     End If
 End If
 End Sub

@@ -1,9 +1,108 @@
 Option Explicit
 Option Compare Database   'Use database order for string comparisons
+Sub UpdateDataCategory()
+On Error GoTo err_updatedatacategory
+    Dim sql1
+    If spString <> "" Then
+        Dim mydb As DAO.Database
+        Dim myq1 As QueryDef
+        Set mydb = CurrentDb
+        Set myq1 = mydb.CreateQueryDef("")
+        myq1.Connect = spString
+            myq1.ReturnsRecords = False
+            myq1.sql = "sp_Excavation_Delete_DataCategory_Entry " & Me![Unit Number]
+            myq1.Execute
+        myq1.Close
+        Set myq1 = Nothing
+        mydb.Close
+        Set mydb = Nothing
+    Else
+        MsgBox "The data category record has not been deleted, please update it manually.", vbCritical, "Error"
+    End If
+    If Me![cboExcavationStatus] = "void" Then
+        sql1 = "INSERT INTO [Exca: Unit Data Categories] ([Unit Number], [Data Category], Description, [in situ], location, material, deposition) VALUES (" & Me![Unit Number] & ", 'arbitrary', 'void (unused unit no)', '','','','');"
+        DoCmd.RunSQL sql1
+    ElseIf Me![cboExcavationStatus] = "natural" Then
+        sql1 = "INSERT INTO [Exca: Unit Data Categories] ([Unit Number], [Data Category], Description, [in situ], location, material, deposition) VALUES (" & Me![Unit Number] & ", 'natural', '', '','','','');"
+        DoCmd.RunSQL sql1
+    ElseIf Me![cboExcavationStatus] = "unstratified" Then
+        sql1 = "INSERT INTO [Exca: Unit Data Categories] ([Unit Number], [Data Category], Description, [in situ], location, material, deposition) VALUES (" & Me![Unit Number] & ", 'arbitrary', 'unstratified', '','','','');"
+        DoCmd.RunSQL sql1
+    End If
+    Me![Exca: Unit Data Categories LAYER subform].Requery
+    Me![Exca: Unit Data Categories CLUSTER subform].Requery
+    Me![Exca: Unit Data Categories CUT subform].Requery
+    Me![Exca: Unit Data Categories SKELL subform].Requery
+    Me![Category] = Me![cboExcavationStatus]
+    Call Form_Current 'update screen correctly
+Exit Sub
+err_updatedatacategory:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Sub Delete_Category_SubTable_Entry(deleteFrom, Unit)
+On Error GoTo err_delete_cat
+If spString <> "" Then
+    Dim mydb As DAO.Database
+    Dim myq1 As QueryDef
+    Set mydb = CurrentDb
+    Set myq1 = mydb.CreateQueryDef("")
+    myq1.Connect = spString
+        myq1.ReturnsRecords = False
+        myq1.sql = "sp_Excavation_Delete_Category_SubTable_Entry " & Unit & ", '" & deleteFrom & "'"
+        myq1.Execute
+    myq1.Close
+    Set myq1 = Nothing
+    mydb.Close
+    Set mydb = Nothing
+Else
+    MsgBox "The " & deleteFrom & " record cannot be deleted, please restart the database, set this unit back to " & deleteFrom & " and try this change again", vbCritical, "Error"
+End If
+Exit Sub
+err_delete_cat:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub Area_AfterUpdate()
 On Error GoTo err_Area_AfterUpdate
 If Me![Area].Column(1) <> "" Then
     Me![Mound] = Me![Area].Column(1)
+    If IsNull(Me![TimePeriod]) Then
+        If Me![Mound] = "West" Then
+            Me![TimePeriod] = "Chalcolithic"
+        ElseIf Me![Mound] = "Off-Site" Then
+            Me![TimePeriod] = "Unknown"
+        Else
+            Me![TimePeriod] = "Neolithic"
+        End If
+    Else
+        Dim response
+        If Me![Mound] = "West" And Me![TimePeriod] <> "Chalcolithic" Then
+            response = MsgBox("A timeperiod " & Me![TimePeriod] & " has previously been set for this unit. The latest change means the system think it should now be set to Chalcolithic, is this right?", vbQuestion + vbYesNo, "Timeperiod check")
+            If response = vbYes Then
+                Me![TimePeriod] = "Chalcolithic"
+            Else
+                MsgBox "The timeperiod has been left as " & Me![TimePeriod] & ". Please let your supervisor know if this is incorrect.", vbInformation, "Timeperiod"
+            End If
+        ElseIf Me![Mound] = "East" And Me![TimePeriod] <> "Neolithic" Then
+            response = MsgBox("A timeperiod " & Me![TimePeriod] & " has previously been set for this unit. The latest change means the system think it should now be set to Neolithic, is this right?", vbQuestion + vbYesNo, "Timeperiod check")
+            If response = vbYes Then
+                Me![TimePeriod] = "Neolithic"
+            Else
+                MsgBox "The timeperiod has been left as " & Me![TimePeriod] & ". Please let your supervisor know if this is incorrect.", vbInformation, "Timeperiod"
+            End If
+        ElseIf Me![Mound] = "Off-Site" And Me![TimePeriod] <> "Unknown" Then
+            response = MsgBox("A timeperiod " & Me![TimePeriod] & " has previously been set for this unit. The latest change means the system think it should now be set to Unknown, is this right?", vbQuestion + vbYesNo, "Timeperiod check")
+            If response = vbYes Then
+                Me![TimePeriod] = "Unknown"
+            Else
+                MsgBox "The timeperiod has been left as " & Me![TimePeriod] & ". Please let your supervisor know if this is incorrect.", vbInformation, "Timeperiod"
+            End If
+        End If
+    End If
+End If
+If Me![Area] <> "" Then
+    Me![cboFT].RowSource = "SELECT [Exca: Foundation Trench Description].FTName, [Exca: Foundation Trench Description].Description, [Exca: Foundation Trench Description].Area, [Exca: Foundation Trench Description].DisplayOrder FROM [Exca: Foundation Trench Description] WHERE [Area] = '" & Me![Area] & "' ORDER BY [Exca: Foundation Trench Description].Area, [Exca: Foundation Trench Description].DisplayOrder;"
 End If
 Exit Sub
 err_Area_AfterUpdate:
@@ -41,6 +140,34 @@ err_Building_AfterUpdate:
 End Sub
 Private Sub Category_AfterUpdate()
 On Error GoTo Err_Category_AfterUpdate
+If Me![Category].OldValue <> "" Or Not IsNull(Me![Category]) Then
+    If Not ((Me![Category].OldValue = "cluster" Or Me![Category].OldValue = "layer") And (Me![Category] = "cluster" Or Me![Category] = "layer")) Then
+        Dim checkit
+        checkit = Null
+        If Me![Category].OldValue = "cut" Then 'check for cut info
+            checkit = DLookup("[Unit Number]", "[Exca: Descriptions Cut]", "[Unit Number] = " & Me![Unit Number])
+        ElseIf Me![Category].OldValue = "layer" Or Me![Category].OldValue = "cluster" Then
+            checkit = DLookup("[Unit Number]", "[Exca: Descriptions Layer]", "[Unit Number] = " & Me![Unit Number])
+        ElseIf Me![Category].OldValue = "skeleton" Then
+            checkit = DLookup("[Unit Number]", "[Exca: Skeleton Data]", "[Unit Number] = " & Me![Unit Number])
+        End If
+        If Not IsNull(checkit) Then
+            Dim resp, sql
+            resp = MsgBox("By changing the category of this Unit you will lose the " & Me![Category].OldValue & " specific data (if any). Do you still want to change the category?", vbQuestion + vbYesNo, "Confirm Action")
+            If resp = vbNo Then
+                Me![Category] = Me![Category].OldValue
+            ElseIf resp = vbYes Then
+                If Me![Category].OldValue = "layer" Or Me![Category].OldValue = "cluster" Then
+                    Call Delete_Category_SubTable_Entry("layer", Me![Unit Number])
+                ElseIf Me![Category].OldValue = "cut" Then
+                    Call Delete_Category_SubTable_Entry("cut", Me![Unit Number])
+                ElseIf Me![Category].OldValue = "skeleton" Then
+                    Call Delete_Category_SubTable_Entry("skeleton", Me![Unit Number])
+                End If
+            End If
+        End If
+    End If
+End If
 Select Case Me.Category
 Case "cut"
     Me![Exca: Subform Layer descr].Visible = False
@@ -120,18 +247,88 @@ Err_Category_AfterUpdate:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cboExcavationStatus_AfterUpdate()
+On Error GoTo err_cboExcaStatus
+    If Me![cboExcavationStatus] <> "excavated" And Me![cboExcavationStatus] <> "not excavated" Then
+        If Me![Category] = "" Or IsNull(Me![Category]) Then
+            Me![Category] = Me![cboExcavationStatus]
+            Me![Category].Locked = True
+            Me![Category].Enabled = False
+        Else
+            If Me![Category] = "cut" Or Me![Category] = "skeleton" Then
+                Dim checkit
+                checkit = Null
+                If Me![Category] = "cut" Then 'check for cut info
+                    checkit = DLookup("[Unit Number]", "[Exca: Descriptions Cut]", "[Unit Number] = " & Me![Unit Number])
+                ElseIf Me![Category].OldValue = "skeleton" Then
+                    checkit = DLookup("[Unit Number]", "[Exca: Skeleton Data]", "[Unit Number] = " & Me![Unit Number])
+                End If
+                If Not IsNull(checkit) Then
+                    Dim resp, sql
+                    resp = MsgBox("By changing the status of this Unit you will lose the " & Me![Category].OldValue & " specific data (if any). Do you still want to change the status?", vbQuestion + vbYesNo, "Confirm Action")
+                    If resp = vbNo Then
+                        Me![cboExcavationStatus] = Me![cboExcavationStatus].OldValue
+                    ElseIf resp = vbYes Then
+                        If Me![Category] = "cut" Then
+                            Call Delete_Category_SubTable_Entry("cut", Me![Unit Number])
+                            Call UpdateDataCategory 'local sub
+                        ElseIf Me![Category] = "skeleton" Then
+                            Call Delete_Category_SubTable_Entry("skeleton", Me![Unit Number])
+                            Call UpdateDataCategory 'local sub
+                        End If
+                    End If
+                Else
+                    Call UpdateDataCategory 'local sub
+                End If
+                Me![Category].Locked = True
+                Me![Category].Enabled = False
+            Else 'If Me![Category] = "void" Or Me![Category] = "natural" Or Me![Category] = "unstratified" Then
+                Call UpdateDataCategory 'local sub
+            End If
+        End If
+    Else
+        If Me![cboExcavationStatus].OldValue <> "Excavated" And Me![cboExcavationStatus].OldValue <> "Not Excavated" Then
+            Call UpdateDataCategory
+            Me![Category] = "Layer" 'set default to layer
+            Me![Category].Locked = False
+            Me![Category].Enabled = True
+        Else
+        End If
+    End If
+Exit Sub
+err_cboExcaStatus:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cboFindUnit_AfterUpdate()
 On Error GoTo err_cboFindUnit_AfterUpdate
     If Me![cboFindUnit] <> "" Then
         If Me![Unit Number].Enabled = False Then Me![Unit Number].Enabled = True
         DoCmd.GoToControl "Unit Number"
         DoCmd.FindRecord Me![cboFindUnit]
+        DoCmd.GoToControl "cboFindUnit"
         Me![cboFindUnit] = ""
     End If
 Exit Sub
 err_cboFindUnit_AfterUpdate:
     Call General_Error_Trap
     Exit Sub
+End Sub
+Private Sub cboFindUnit_NotInList(NewData As String, response As Integer)
+On Error GoTo err_cbofindNot
+    MsgBox "Sorry this Unit cannot be found in the list", vbInformation, "No Match"
+    response = acDataErrContinue
+    Me![cboFindUnit].Undo
+    SendKeys "{ESC}"
+Exit Sub
+err_cbofindNot:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cboFT_AfterUpdate()
+If Me![cboFT] <> "" Then
+    Me![cmdGoToFT].Enabled = True
+End If
 End Sub
 Private Sub cmdAddNew_Click()
 On Error GoTo err_cmdAddNew_Click
@@ -142,6 +339,53 @@ err_cmdAddNew_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdEditPhase_Click()
+On Error GoTo err_edit
+If Not IsNull(Me![Unit Number]) Then
+    Dim checkB, checkSp, getB, getSp, counter, response
+    checkB = DCount("[In_Building]", "[Exca: Units in Buildings]", "[Unit] = " & Me![Unit Number])
+    If checkB = 0 Then
+        checkSp = DCount("[In_Space]", "[Exca: Units in Spaces]", "[Unit] = " & Me![Unit Number])
+        If checkSp = 0 Then
+            MsgBox "This unit is not associated with a Building or a Space so it cannot be phased in this way", vbInformation, "Nothing to Phase"
+            Exit Sub
+        Else
+            If checkSp > 1 Then
+                counter = 1
+                Me![Exca: subform  Features in Spaces].Form.RecordsetClone.MoveFirst
+                Do Until counter > checkSp
+                    response = MsgBox("Do you want to phase this unit to Space " & Me![Exca: subform  Features in Spaces].Form.RecordsetClone(1).Value & "?" & _
+                                Chr(13) & Chr(13) & "Clicking No will prompt the question for the next Space in the list if there are more.", vbQuestion + vbYesNoCancel, "Which Space to phase now?")
+                    If response = vbYes Then
+                        DoCmd.OpenForm "frm_pop_phase_a_unit", acNormal, , , acFormPropertySettings, acDialog, "SELECT [Exca: SpacePhases].SpacePhase FROM [Exca: SpacePhases] WHERE [Exca: SpacePhases].SpaceNumber=" & Me![Exca: subform  Features in Spaces].Form.RecordsetClone(1).Value & ";" 'open form with space number
+                        Exit Do
+                    ElseIf response = vbCancel Then
+                        Exit Do
+                    End If
+                    Me![Exca: subform  Features in Spaces].Form.RecordsetClone.MoveNext
+                    counter = counter + 1
+                Loop
+            Else
+                getSp = DLookup("[In_Space]", "[Exca: Units in Spaces]", "[Unit] = " & Me![Unit Number])
+                DoCmd.OpenForm "frm_pop_phase_a_unit", acNormal, , , acFormPropertySettings, acDialog, "SELECT [Exca: SpacePhases].SpacePhase FROM [Exca: SpacePhases] WHERE [Exca: SpacePhases].SpaceNumber=" & getSp & ";" 'open form with space number
+            End If
+        End If
+    Else
+        If checkB > 1 Then
+            MsgBox "This unit is associated with more than one Building. Currently the system does not support phasing a unit to more than one building. Please discuss this with Shahina.", vbInformation, "Multiple Building Numbers"
+            Exit Sub
+        Else
+            getB = DLookup("[In_Building]", "[Exca: Units in Buildings]", "[Unit] = " & Me![Unit Number])
+            DoCmd.OpenForm "frm_pop_phase_a_unit", acNormal, , , acFormPropertySettings, acDialog, "SELECT [Exca: BuildingPhases].BuildingPhase FROM [Exca: BuildingPhases] WHERE [Exca: BuildingPhases].BuildingNumber=" & getB & ";" 'open form with building number
+        End If
+    End If
+    Me![Exca: subform Units Occupation Phase].Requery
+End If
+Exit Sub
+err_edit:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cmdGoToBuilding_Click()
 On Error GoTo Err_cmdGoToBuilding_Click
 Dim checknum, msg, retVal, sql, permiss
@@ -149,7 +393,7 @@ If Not IsNull(Me![Building]) Or Me![Building] <> "" Then
     checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![Building])
     If IsNull(checknum) Then
         permiss = GetGeneralPermissions
-        If permiss = "ADMIN" Or permiss = "RW" Then
+        If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
             msg = "This Building Number DOES NOT EXIST in the database."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
             retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
@@ -176,6 +420,24 @@ Err_cmdGoToBuilding_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdGoToFT_Click()
+On Error GoTo Err_cmdGoToFT_Click
+    Dim stDocName As String
+    Dim stLinkCriteria As String
+    Dim checknum, msg, retVal, sql, insertArea, permiss
+    stDocName = "Exca: Admin_Foundation_Trenches"
+    If Not IsNull(Me![cboFT]) Or Me![cboFT] <> "" Then
+        stLinkCriteria = "[FTName]='" & Me![cboFT] & "'"
+        DoCmd.OpenForm stDocName, acNormal, , stLinkCriteria, acFormReadOnly
+    Else
+        MsgBox "No FT record to view", vbInformation, "No FT Name"
+    End If
+Exit_cmdGoToFT_Click:
+    Exit Sub
+Err_cmdGoToFT_Click:
+    Call General_Error_Trap
+    Resume Exit_cmdGoToFT_Click
+End Sub
 Private Sub cmdGoToImage_Click()
 On Error GoTo err_cmdGoToImage_Click
 Dim mydb As DAO.Database
@@ -186,7 +448,7 @@ Set mydb = CurrentDb
     Set myq1 = mydb.CreateQueryDef("")
     myq1.Connect = mydb.TableDefs(0).Connect & ";UID=portfolio;PWD=portfolio"
     myq1.ReturnsRecords = True
-    myq1.sql = "sp_Portfolio_GetUnitFieldID " & Me![Year]
+    myq1.sql = "sp_Portfolio_GetUnitFieldID_2008 " & Me![Year]
     Dim myrs As Recordset
     Set myrs = myq1.OpenRecordset
     If myrs.Fields(0).Value = "" Or myrs.Fields(0).Value = 0 Then
@@ -198,7 +460,7 @@ Set mydb = CurrentDb
     Set myrs = Nothing
     myq1.Close
     Set myq1 = Nothing
-    For I = 0 To mydb.TableDefs.count - 1 'loop the tables collection
+    For I = 0 To mydb.TableDefs.Count - 1 'loop the tables collection
     Set tmptable = mydb.TableDefs(I)
     If tmptable.Connect <> "" Then
         tblConn = tmptable.Connect
@@ -207,7 +469,7 @@ Set mydb = CurrentDb
     Next I
     If tblConn <> "" Then
         If InStr(tblConn, "catalsql") = 0 Then
-            DoCmd.OpenForm "Image_Display", acNormal, , "[StringValue] = '" & Me![Unit Number] & "' AND [Field_ID] = " & fldid, acFormReadOnly, acDialog, Me![Year]
+            DoCmd.OpenForm "Image_Display", acNormal, , "[IntValue] = " & Me![Unit Number] & " AND [Field_ID] = " & fldid, acFormReadOnly, acDialog, Me![Year]
         Else
             msg = "As you are working remotely the system will have to display the images in a web browser." & Chr(13) & Chr(13)
             msg = msg & "At present this part of the website is secure, you must enter following details to gain access:" & Chr(13) & Chr(13)
@@ -234,7 +496,7 @@ If Not IsNull(Me![Space]) Or Me![Space] <> "" Then
     checknum = DLookup("[Space Number]", "[Exca: Space Sheet]", "[Space Number] = '" & Me![Space] & "'")
     If IsNull(checknum) Then
         permiss = GetGeneralPermissions
-        If permiss = "ADMIN" Or permiss = "RW" Then
+        If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
             msg = "This Space Number DOES NOT EXIST in the database."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
             retVal = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
@@ -258,6 +520,51 @@ If Not IsNull(Me![Space]) Or Me![Space] <> "" Then
 End If
 Exit Sub
 Err_cmdGoToSpace_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdPrintUnitSheet_Click()
+On Error GoTo err_print
+    If LCase(Me![Category]) = "layer" Or LCase(Me![Category]) = "cluster" Then
+        DoCmd.OpenReport "R_Unit_Sheet_layercluster", acViewPreview, , "[unit number] = " & Me![Unit Number]
+    ElseIf LCase(Me![Category]) = "cut" Then
+        DoCmd.OpenReport "R_Unit_Sheet_cut", acViewPreview, , "[unit number] = " & Me![Unit Number]
+    ElseIf LCase(Me![Category]) = "skeleton" Then
+        DoCmd.OpenReport "R_Unit_Sheet_skeleton", acViewPreview, , "[unit number] = " & Me![Unit Number]
+    End If
+Exit Sub
+err_print:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdReportProblem_Click()
+On Error GoTo err_reportprob
+    DoCmd.OpenForm "frm_pop_problemreport", , , , acFormAdd, acDialog, "unit number;" & Me![Unit Number]
+Exit Sub
+err_reportprob:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdTypeLOV_Click()
+On Error GoTo err_typeLOV
+    DoCmd.OpenForm "Frm_subform_sampletypeLOV", acNormal, , , acFormReadOnly, acDialog
+Exit Sub
+err_typeLOV:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdViewSketch_Click()
+On Error GoTo err_opensketch
+    Dim Path
+    Path = sketchpath
+    Path = Path & Me![Unit Number] & ".jpg"
+    If Dir(Path) = "" Then
+        MsgBox "The sketch plan of this unit has not been scanned in yet.", vbInformation, "No Sketch available to view"
+    Else
+        DoCmd.OpenForm "frm_pop_graphic", acNormal, , , acFormReadOnly, , Me![Unit Number]
+    End If
+Exit Sub
+err_opensketch:
     Call General_Error_Trap
     Exit Sub
 End Sub
@@ -289,7 +596,14 @@ End Sub
 Private Sub FastTrack_Click()
 On Error GoTo err_FastTrack_Click
     If Me![FastTrack] = True Then
-        Me![NotExcavated] = False
+        Me![RemainingVolume].Enabled = True
+    Else
+        If Me![RemainingVolume] <> 0 And Not IsNull(Me![RemainingVolume]) And Me![RemainingVolume] <> "" Then
+            MsgBox "This unit records an Unsieved volume figure. There is no unsieved volume for a non fast track unit so please sort this out first (if it is invalid please remove the unsieved volume figure)", vbExclamation, "Volume Problem"
+            Me![FastTrack] = True
+        Else
+            Me![RemainingVolume].Enabled = False
+        End If
     End If
 Exit Sub
 err_FastTrack_Click:
@@ -342,8 +656,8 @@ Dim stLinkCriteria As String
 On Error GoTo err_Form_Current
 Dim permiss
 permiss = GetGeneralPermissions
-If permiss = "ADMIN" Or permiss = "RW" Then
-    If IsNull(Me![Unit Number]) Or Me![Unit Number] = "" Then 'make rest of fields read only
+If (permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper") And ([Unit Number] <> 0 Or IsNull([Unit Number])) Then
+    If IsNull(Me![Unit Number]) Or Me![Unit Number] = "" Then
         ToggleFormReadOnly Me, True, "Additions" 'code in GeneralProcedures-shared
         Me![lblMsg].Visible = True
         Me![Unit Number].Locked = False
@@ -359,7 +673,6 @@ If permiss = "ADMIN" Or permiss = "RW" Then
             Else
                 ToggleFormReadOnly Me, False, "NoDeletions"
             End If
-            Me![Year].SetFocus
             Me![Unit Number].Locked = True
             Me![Unit Number].Enabled = False
             Me![Unit Number].BackColor = Me.Section(0).BackColor
@@ -383,20 +696,13 @@ Me![Definition].TabStop = True
 Me![Execution].TabStop = True
 Me![Condition].TabStop = True
 Dim imageCount, Imgcaption
-        imageCount = 0
-If imageCount > 0 Then
-    Imgcaption = imageCount
-    If imageCount = 1 Then
-        Imgcaption = Imgcaption & " Image to Display"
-    Else
-        Imgcaption = Imgcaption & " Images to Display"
-    End If
+    Imgcaption = "Images of Unit"
     Me![cmdGoToImage].Caption = Imgcaption
     Me![cmdGoToImage].Enabled = True
-Else
-    Me![cmdGoToImage].Caption = "No Image to Display"
-    Me![cmdGoToImage].Enabled = False
-End If
+Dim Path
+Path = sketchpath
+Path = Path & Me![Unit Number] & ".jpg"
+        Me!cmdViewSketch.Enabled = True
 Select Case Me.Category
 Case "layer"
     Me![Exca: Subform Layer descr].Visible = True
@@ -457,6 +763,37 @@ Case Else
     Me![Exca: subform Skeletons same as].Visible = False
     Me![Exca: Unit Data Categories SKELL subform].Visible = False
 End Select
+If Me![Area] <> "" Then
+    Me![cboFT].RowSource = "SELECT [Exca: Foundation Trench Description].FTName, [Exca: Foundation Trench Description].Description, [Exca: Foundation Trench Description].Area, [Exca: Foundation Trench Description].DisplayOrder FROM [Exca: Foundation Trench Description] WHERE [Area] = '" & Me![Area] & "' ORDER BY [Exca: Foundation Trench Description].Area, [Exca: Foundation Trench Description].DisplayOrder;"
+End If
+If Me![cboFT] <> "" Then
+    Me![cmdGoToFT].Enabled = True
+Else
+    Me![cmdGoToFT].Enabled = False
+End If
+If (permiss = "ADMIN" Or permiss = "exsuper") Then
+    Me![cboFT].Locked = False
+    Me![cboFT].Enabled = True
+    Me![cmdEditPhase].Enabled = True
+    Me![cboTimePeriod].Locked = False
+    Me![cboTimePeriod].Enabled = True
+Else
+    Me![cboFT].Locked = True
+    Me![cboFT].Enabled = False
+    Me![cmdEditPhase].Enabled = False
+    Me![cboTimePeriod].Locked = True
+    Me![cboTimePeriod].Enabled = False
+End If
+If Me![cboExcavationStatus] <> "excavated" And Me![cboExcavationStatus] <> "not excavated" Then
+    Me![Category].Enabled = False
+Else
+    Me![Category].Enabled = True
+End If
+If Me![FastTrack] = True Then
+    Me![RemainingVolume].Enabled = True
+Else
+    Me![RemainingVolume].Enabled = False
+End If
 Exit Sub
 err_Form_Current: 'SAJ
     General_Error_Trap 'sub in generalprocedures module
@@ -466,10 +803,14 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open:
 Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If (permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper") And ([Unit Number] <> 0) Then
     Else
         ToggleFormReadOnly Me, True
-        Me![cmdAddNew].Enabled = False
+        If permiss <> "ADMIN" And permiss <> "RW" And permiss <> "exsuper" Then
+            Me![cmdAddNew].Enabled = False
+        ElseIf permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
+            Me.AllowAdditions = True 'this ensures rw can add record right from start
+        End If
         Me![Unit Number].BackColor = Me.Section(0).BackColor
         Me![Unit Number].Locked = True
         Me![copy_method].Enabled = False
@@ -477,6 +818,8 @@ Dim permiss
     If Me.FilterOn = True Or Me.AllowEdits = False Then
         Me![cboFindUnit].Enabled = False
         Me![cmdAddNew].Enabled = False
+    Else
+        DoCmd.GoToControl "cboFindUnit"
     End If
 Exit Sub
 err_Form_Open:
@@ -599,7 +942,7 @@ On Error GoTo Err_Open_priority_Click
     checknum = DLookup("[Unit Number]", "[Exca: Priority Detail]", "[Unit Number] = " & Me![Unit Number])
     If IsNull(checknum) Then
         permiss = GetGeneralPermissions
-        If permiss = "ADMIN" Or permiss = "RW" Then
+        If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
             sql = "INSERT INTO [Exca: Priority Detail] ([Unit Number], [DateSet]) VALUES (" & Me![Unit Number] & ", #" & Date & "#);"
             DoCmd.RunSQL sql
         Else
@@ -628,7 +971,7 @@ Err_go_feature_Click:
     MsgBox Err.Description
     Resume Exit_go_feature_Click
 End Sub
-Sub close_Click()
+Sub Close_Click()
 On Error GoTo err_Excavation_Click
     Dim stDocName As String
     Dim stLinkCriteria As String
@@ -655,7 +998,6 @@ Private Sub Priority_Unit_Click()
 On Error GoTo err_Priority_Unit_Click
 Dim checknum, checknum1, sql, sql1
     If Me![Priority Unit] = True Then
-        Me![NotExcavated] = False
         checknum = DLookup("[Unit Number]", "[Exca: Priority Detail]", "[Unit Number] = " & Me![Unit Number])
         If IsNull(checknum) Then
             sql = "INSERT INTO [Exca: Priority Detail] ([Unit Number], [DateSet]) VALUES (" & Me![Unit Number] & ", #" & Date & "#);"
@@ -764,4 +1106,25 @@ Exit_go_skell_Click:
 Err_go_skell_Click:
     MsgBox Err.Description
     Resume Exit_go_skell_Click
+End Sub
+Private Sub Year_AfterUpdate()
+End Sub
+Private Sub Year_LostFocus()
+On Error GoTo err_Year
+    If IsNull(Me![cboFindUnit]) Then
+        If IsNull(Me![Year]) Or Me![Year] = "" Then
+            MsgBox "You must enter the year this unit number was excavated, or allocated if not excavated yet", vbInformation, "Invalid Year"
+            DoCmd.GoToControl "Area"
+            DoCmd.GoToControl "Year"
+            Me![Year].SetFocus
+        ElseIf Me![Year] < 1993 Or Me![Year] > ThisYear Then
+            MsgBox Me![Year] & " is not a valid Year please try again", vbInformation, "Invalid Year"
+            DoCmd.GoToControl "Area"
+            DoCmd.GoToControl "Year"
+            Me![Year].SetFocus
+        End If
+    End If
+Exit Sub
+err_Year:
+    Exit Sub
 End Sub

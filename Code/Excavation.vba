@@ -49,6 +49,14 @@ err_cmdAdmin_Click:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cmdFT_Click()
+On Error GoTo err_cmdFT_Click
+    DoCmd.OpenForm "Exca: Admin_Foundation_Trenches", acNormal
+Exit Sub
+err_cmdFT_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cmdLists_Click()
 On Error GoTo err_cmdLists_Click
     DoCmd.OpenForm "Excavation:ListsMenu", acNormal, , , acFormReadOnly
@@ -65,6 +73,9 @@ cmdLists_Click
 End Sub
 Private Sub Command27_Click()
 cmdAdmin_Click
+End Sub
+Private Sub Command29_Click()
+cmdFT_Click
 End Sub
 Private Sub Feature_Sheet_Button_Click()
 On Error GoTo Err_Feature_Sheet_Button_Click

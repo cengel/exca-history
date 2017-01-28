@@ -34,7 +34,7 @@ getpwd:
 Dim mydb As DAO.Database, I
 Dim tmptable As TableDef
 Set mydb = CurrentDb
-For I = 0 To mydb.TableDefs.count - 1 'loop the tables collection
+For I = 0 To mydb.TableDefs.Count - 1 'loop the tables collection
     Set tmptable = mydb.TableDefs(I)
     If tmptable.Connect <> "" Then
         tmptable.Connect = tmptable.Connect & ";UID=" & username & ";PWD=" & pwd
@@ -76,7 +76,7 @@ Dim username, pwd, tblName, rstemp
 Dim mydb As DAO.Database, I
 Dim tmptable As TableDef
 Set mydb = CurrentDb
-For I = 0 To mydb.TableDefs.count - 1 'loop the tables collection
+For I = 0 To mydb.TableDefs.Count - 1 'loop the tables collection
     Set tmptable = mydb.TableDefs(I)
     If tmptable.Connect <> "" Then
         tmptable.Connect = tmptable.Connect & ";UID=" & username & ";PWD=" & pwd
@@ -99,7 +99,7 @@ If username <> "" And pwd <> "" Then
     Dim myq As QueryDef
     Set myq = mydb.CreateQueryDef("")
     connStr = ""
-    For I = 0 To mydb.TableDefs.count - 1 'loop the tables collection
+    For I = 0 To mydb.TableDefs.Count - 1 'loop the tables collection
          Set tmptable = mydb.TableDefs(I)
         If tmptable.Connect <> "" Then
             If connStr = "" Then connStr = tmptable.Connect
@@ -158,7 +158,7 @@ Sub WriteOutTableNames()
 Dim mydb As DAO.Database, I
 Dim tmptable As TableDef
 Set mydb = CurrentDb
-For I = 0 To mydb.TableDefs.count - 1 'loop the tables collection
+For I = 0 To mydb.TableDefs.Count - 1 'loop the tables collection
     Set tmptable = mydb.TableDefs(I)
     If InStr(tmptable.Name, "MSys") = 0 Then
         Debug.Print tmptable.Name

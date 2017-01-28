@@ -7,7 +7,7 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
         ToggleFormReadOnly Me, False
     Else
         ToggleFormReadOnly Me, True
@@ -27,7 +27,7 @@ On Error GoTo Err_go_to_feature_Click
         checknum = DLookup("[Feature Number]", "[Exca: Features]", "[Feature Number] = " & Me![In_feature])
         If IsNull(checknum) Then
             permiss = GetGeneralPermissions
-            If permiss = "ADMIN" Or permiss = "RW" Then
+            If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
                 msg = "This Feature Number DOES NOT EXIST in the database."
                 msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
                 retVal = MsgBox(msg, vbInformation + vbYesNo, "Feature Number does not exist")
@@ -90,6 +90,20 @@ If Me![In_feature] <> "" Then
 End If
 Exit Sub
 err_In_feature_AfterUpdate:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub In_feature_BeforeUpdate(Cancel As Integer)
+On Error GoTo err_featurebefore
+If Me![In_feature] = 0 Then
+        MsgBox "Feature 0 is invalid, this entry will be removed", vbInformation, "Invalid Entry"
+        Cancel = True
+        SendKeys "{ESC}" 'seems to need it done 3x
+        SendKeys "{ESC}"
+        SendKeys "{ESC}"
+End If
+Exit Sub
+err_featurebefore:
     Call General_Error_Trap
     Exit Sub
 End Sub

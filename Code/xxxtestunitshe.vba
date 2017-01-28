@@ -572,7 +572,7 @@ Err_go_feature_Click:
     MsgBox Err.Description
     Resume Exit_go_feature_Click
 End Sub
-Sub close_Click()
+Sub Close_Click()
 On Error GoTo err_Excavation_Click
     Dim stDocName As String
     Dim stLinkCriteria As String

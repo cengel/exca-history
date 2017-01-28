@@ -104,6 +104,7 @@ Case "floors (use)"
 End Select
 End Sub
 Private Sub Form_Current()
+On Error GoTo err_curr
 Select Case Me.Data_Category
     Case "fill"
     Me.In_Situ.Enabled = False
@@ -214,12 +215,16 @@ Select Case Me.Data_Category
     Me.Material.Enabled = False
     Me.basal_spit.Enabled = False
 End Select
+Exit Sub
+err_curr:
+    Call General_Error_Trap
+    Exit Sub
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
         ToggleFormReadOnly Me, False
     Else
         ToggleFormReadOnly Me, True

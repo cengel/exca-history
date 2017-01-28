@@ -48,12 +48,12 @@ Err_copy_data_Click:
 End Sub
 Sub find_unit_Click()
 End Sub
-Sub close_Click()
-On Error GoTo Err_close_Click
+Sub Close_Click()
+On Error GoTo err_close_Click
     DoCmd.Close
 Exit_close_Click:
     Exit Sub
-Err_close_Click:
+err_close_Click:
    Call General_Error_Trap
     Resume Exit_close_Click
 End Sub

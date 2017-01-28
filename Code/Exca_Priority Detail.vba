@@ -6,8 +6,7 @@ On Error GoTo err_cboFindPriority_AfterUpdate
         If Me![Unit Number].Enabled = False Then Me![Unit Number].Enabled = True
         DoCmd.GoToControl "Unit Number"
         DoCmd.FindRecord Me![cboFindPriority]
-        If Me![Short Description].Enabled = False Then Me![Short Description].Enabled = True
-        DoCmd.GoToControl "Short Description"
+        DoCmd.GoToControl "cboFindPriority"
         Me![Unit Number].Enabled = False
         Me![cboFindPriority] = ""
     End If
@@ -17,11 +16,11 @@ err_cboFindPriority_AfterUpdate:
     Exit Sub
 End Sub
 Private Sub cmdClose_Click()
-On Error GoTo Err_close_Click
+On Error GoTo err_close_Click
     DoCmd.Close acForm, "Exca: Priority Detail", acSaveYes
 Exit_close_Click:
     Exit Sub
-Err_close_Click:
+err_close_Click:
     Call General_Error_Trap
     Resume Exit_close_Click
 End Sub
@@ -29,7 +28,7 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
 Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
         Me![Priority].Locked = False
         Me![Priority].Enabled = True
         Me![Priority].BackColor = 16777215
@@ -49,6 +48,13 @@ Dim permiss
         Me![Short Description].Locked = True
         Me![Short Description].Enabled = False
         Me![Short Description].BackColor = Me.Section(0).BackColor
+    End If
+    If Me.FilterOn = True Or Me.AllowEdits = False Then
+        Me![cboFindPriority].Enabled = False
+        Me.AllowAdditions = False
+        DoCmd.GoToControl "cmdClose"
+    Else
+        DoCmd.GoToControl "cboFindPriority"
     End If
 Exit Sub
 err_Form_Open:

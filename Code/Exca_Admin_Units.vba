@@ -41,7 +41,6 @@ On Error GoTo err_cmdReNumber
                 Call RenumARecord("Exca: Unit Sheet", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
                 Call RenumARecord("Exca: Units in Features", "Unit", retVal, Me![txtUnitNumber], False, mydb)
                 Call RenumARecord("Exca: Units in Spaces", "Unit", retVal, Me![txtUnitNumber], False, mydb)
-                Call RenumARecord("Exca: Units in Buildings", "Unit", retVal, Me![txtUnitNumber], False, mydb)
                 Call RenumARecord("Exca: Unit Interpretive Categories", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
                 Call RenumARecord("Exca: Unit Data Categories", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
                 Call RenumARecord("Exca: Dimensions", "Unit Number", retVal, Me![txtUnitNumber], False, mydb)
@@ -168,7 +167,6 @@ If retVal = vbYes Then
         wrkdefault.BeginTrans
         If UFeature <> "" Then Call DeleteARecord("Exca: Units in Features", "Unit", Me![txtUnitNumber], False, mydb)
         If USpace <> "" Then Call DeleteARecord("Exca: Units in Spaces", "Unit", Me![txtUnitNumber], False, mydb)
-        If UBuilding <> "" Then Call DeleteARecord("Exca: Units in Buildings", "Unit", Me![txtUnitNumber], False, mydb)
         If UIntCat <> "" Then Call DeleteARecord("Exca: Unit Interpretive Categories", "Unit Number", Me![txtUnitNumber], False, mydb)
         If UDataCat <> "" Then Call DeleteARecord("Exca: Unit Data Categories", "Unit Number", Me![txtUnitNumber], False, mydb)
         If UDim <> "" Then Call DeleteARecord("Exca: Dimensions", "Unit Number", Me![txtUnitNumber], False, mydb)

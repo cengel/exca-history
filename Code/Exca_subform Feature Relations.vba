@@ -7,11 +7,15 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
         ToggleFormReadOnly Me, False
     Else
         ToggleFormReadOnly Me, True
     End If
+    Me![Feature Type].Locked = True
+    Me![Feature Type].Enabled = False
+    Me![FeatureSubType].Locked = True
+    Me![FeatureSubType].Enabled = False
 Exit Sub
 err_Form_Open:
     Call General_Error_Trap
@@ -19,7 +23,7 @@ err_Form_Open:
 End Sub
 Private Sub To_feature_AfterUpdate()
 On Error GoTo err_To_feature_AfterUpdate
-Dim checknum, msg, retVal, sql, currentFeature, checknum2, featureRel
+Dim checknum, msg, retVal, sql, currentFeature, checknum2, featureRel, checknum3, myrs As DAO.Recordset, mydb As DAO.Database
 If Me![To_feature] <> "" Then
     If IsNumeric(Me![To_feature]) Then
         checknum = DLookup("[Feature Number]", "[Exca: Features]", "[Feature Number] = " & Me![To_feature])
@@ -41,25 +45,26 @@ If Me![To_feature] <> "" Then
                 DoCmd.Hourglass False
             End If
         Else
-            If Not IsNull(Forms![Exca: Feature Sheet]![Space]) Or Forms![Exca: Feature Sheet]![Space] <> "" Then
-                checknum2 = DLookup("[Space]", "[Exca: Features]", "[Feature Number] = " & Me![To_feature])
-                If Not IsNull(checknum2) Then 'there is a space for this related feature
-                    If checknum2 <> Forms![Exca: Feature Sheet]![Space] Then 'do not allow entry if space numbers differ
-                        msg = "This entry is not allowed:  feature (" & Me![To_feature] & ")"
-                        msg = msg & " is in Space " & checknum2 & " but Feature " & Forms![Exca: Feature Sheet]![Feature Number]
-                        msg = msg & " is in Space " & Forms![Exca: Feature Sheet]![Space]
+            checknum2 = DLookup("[In_Space]", "[Exca: Features in Spaces]", "[Feature] = " & Me![Feature Number])
+            If Not IsNull(checknum2) Then 'there is a space for main feature
+                checknum3 = DLookup("[In_Space]", "[Exca: Features in Spaces]", "[Feature] = " & Me![To_feature])
+                If Not IsNull(checknum3) Then 'there is a space for related feature
+                    sql = "SELECT [Exca: Features in Spaces].Feature, [Exca: Features in Spaces].In_Space, [Exca: Features in Spaces_1].Feature, [Exca: Features in Spaces_1].In_Space" & _
+                            " FROM [Exca: Features in Spaces] INNER JOIN [Exca: Features in Spaces] AS [Exca: Features in Spaces_1] ON [Exca: Features in Spaces].In_Space = [Exca: Features in Spaces_1].In_Space " & _
+                            " WHERE ([Exca: Features in Spaces].Feature =" & Me![Feature Number] & ")  AND ([Exca: Features in Spaces_1].Feature=" & Me![To_feature] & ");"
+                    Set mydb = CurrentDb
+                    Set myrs = mydb.OpenRecordset(sql, dbOpenSnapshot)
+                    If myrs.EOF And myrs.BOF Then
+                        msg = "This entry is not allowed because these two features are not currently in the same Space. They must be in the same space to create a relationship."
                         msg = msg & Chr(13) & Chr(13) & "This entry cannot be allowed. Please double check this issue with your Supervisor."
                         MsgBox msg, vbExclamation, "Space mis-match"
-                        MsgBox "To remove this relationship completely press ESC", vbInformation, "Help Tip"
                         If Not IsNull(Me![To_feature].OldValue) Then
                             Me![To_feature] = Me![To_feature].OldValue
+                            DoCmd.GoToControl "To_Feature"
                         Else
-                            featureRel = Me![Relation]
                             Me.Undo
-                            Me![Relation] = featureRel
+                             DoCmd.GoToControl "Relation"
                         End If
-                        DoCmd.GoToControl "Feature Type"
-                        DoCmd.GoToControl "To_Feature"
                     End If
                 End If
             End If

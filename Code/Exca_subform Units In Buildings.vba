@@ -10,7 +10,7 @@ On Error GoTo Err_cmdGoToBuilding_Click
         checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![txtIn_Building])
         If IsNull(checknum) Then
             permiss = GetGeneralPermissions
-            If permiss = "ADMIN" Or permiss = "RW" Then
+            If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
                 msg = "This Building Number DOES NOT EXIST in the database."
                 msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
                 retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
@@ -43,7 +43,6 @@ Err_cmdGoToBuilding_Click:
     Resume Exit_cmdGoToBuilding_Click
 End Sub
 Private Sub Form_BeforeUpdate(Cancel As Integer)
-Me![Date changed] = Now()
 End Sub
 Private Sub Form_Current()
 On Error GoTo err_Current
@@ -59,13 +58,7 @@ err_Current:
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
-    Dim permiss
-    permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
-        ToggleFormReadOnly Me, False
-    Else
         ToggleFormReadOnly Me, True
-    End If
 Exit Sub
 err_Form_Open:
     Call General_Error_Trap
@@ -73,39 +66,15 @@ err_Form_Open:
 End Sub
 Private Sub txtIn_Building_AfterUpdate()
 On Error GoTo err_txtIn_Building_AfterUpdate
-Dim checknum, msg, retVal, sql, insertArea
-If Me![txtIn_Building] <> "" Then
-    If IsNumeric(Me![txtIn_Building]) Then
-        checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![txtIn_Building])
-        If IsNull(checknum) Then
-            msg = "This Building Number DOES NOT EXIST in the database, you must remember to enter it."
-            msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
-            retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
-            If retVal = vbNo Then
-                MsgBox "Ok, but you must remember to enter it soon otherwise you'll be chased!", vbExclamation, "Remember!"
-            Else
-                If Forms![Exca: Unit Sheet]![Area] <> "" Then
-                    insertArea = "'" & Forms![Exca: Unit Sheet]![Area] & "'"
-                Else
-                    insertArea = Null
-                End If
-                sql = "INSERT INTO [Exca: Building Details] ([Number], [Area]) VALUES (" & Me![txtIn_Building] & ", " & insertArea & ");"
-                DoCmd.RunSQL sql
-                DoCmd.OpenForm "Exca: Building Sheet", acNormal, , "[Number] = " & Me![txtIn_Building], acFormEdit, acDialog
-            End If
-        Else
-            Me![cmdGoToBuilding].Enabled = True
-        End If
-    Else
-        MsgBox "The Building number is invalid, please enter a numeric value only", vbInformation, "Invalid Entry"
-    End If
-End If
 Exit Sub
 err_txtIn_Building_AfterUpdate:
     Call General_Error_Trap
     Exit Sub
 End Sub
-Private Sub Unit_AfterUpdate()
-Me.Requery
-DoCmd.GoToRecord , , acLast
+Private Sub txtIn_Building_BeforeUpdate(Cancel As Integer)
+On Error GoTo err_buildingbefore
+Exit Sub
+err_buildingbefore:
+    Call General_Error_Trap
+    Exit Sub
 End Sub

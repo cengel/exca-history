@@ -21,7 +21,7 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
         ToggleFormReadOnly Me, False
     Else
         ToggleFormReadOnly Me, True

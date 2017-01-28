@@ -42,6 +42,16 @@ err_cboFindFeature_AfterUpdate:
     Call General_Error_Trap
     Exit Sub
 End Sub
+Private Sub cboFindFeature_NotInList(NewData As String, response As Integer)
+On Error GoTo err_cbofindNot
+    MsgBox "Sorry this Feature cannot be found in the list", vbInformation, "No Match"
+    response = acDataErrContinue
+    Me![cboFindFeature].Undo
+Exit Sub
+err_cbofindNot:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
 Private Sub cmdAddNew_Click()
 On Error GoTo err_cmdAddNew_Click
     DoCmd.GoToRecord acActiveDataObject, , acNewRec
@@ -58,7 +68,7 @@ If Not IsNull(Me![Building]) Or Me![Building] <> "" Then
     checknum = DLookup("[Number]", "[Exca: Building Details]", "[Number] = " & Me![Building])
     If IsNull(checknum) Then
         permiss = GetGeneralPermissions
-        If permiss = "ADMIN" Or permiss = "RW" Then
+        If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
             msg = "This Building Number DOES NOT EXIST in the database."
             msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
             retVal = MsgBox(msg, vbInformation + vbYesNo, "Building Number does not exist")
@@ -80,6 +90,75 @@ If Not IsNull(Me![Building]) Or Me![Building] <> "" Then
 End If
 Exit Sub
 Err_cmdGoToBuilding_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdGoToImage_Click()
+On Error GoTo err_cmdGoToImage_Click
+Dim mydb As DAO.Database
+Dim tmptable As TableDef, tblConn, I, msg, fldid
+Set mydb = CurrentDb
+    Dim myq1 As QueryDef, connStr
+    Set mydb = CurrentDb
+    Set myq1 = mydb.CreateQueryDef("")
+    myq1.Connect = mydb.TableDefs(0).Connect & ";UID=portfolio;PWD=portfolio"
+    myq1.ReturnsRecords = True
+    myq1.sql = "sp_Portfolio_GetFeatureFieldID_2009 " & Me![Year]
+    Dim myrs As Recordset
+    Set myrs = myq1.OpenRecordset
+    If myrs.Fields(0).Value = "" Or myrs.Fields(0).Value = 0 Then
+        fldid = 0
+    Else
+        fldid = myrs.Fields(0).Value
+    End If
+    myrs.Close
+    Set myrs = Nothing
+    myq1.Close
+    Set myq1 = Nothing
+    For I = 0 To mydb.TableDefs.Count - 1 'loop the tables collection
+    Set tmptable = mydb.TableDefs(I)
+    If tmptable.Connect <> "" Then
+        tblConn = tmptable.Connect
+        Exit For
+    End If
+    Next I
+    If tblConn <> "" Then
+        If InStr(tblConn, "catalsql") = 0 Then
+            DoCmd.OpenForm "Image_Display", acNormal, , "[IntValue] = " & Me![Feature Number] & " AND [Field_ID] = " & fldid, acFormReadOnly, acDialog, Me![Year]
+        Else
+            msg = "As you are working remotely the system will have to display the images in a web browser." & Chr(13) & Chr(13)
+            msg = msg & "At present this part of the website is secure, you must enter following details to gain access:" & Chr(13) & Chr(13)
+            msg = msg & "Username: catalhoyuk" & Chr(13)
+            msg = msg & "Password: SiteDatabase1" & Chr(13) & Chr(13)
+            msg = msg & "When you have finished viewing the images close your browser to return to the database."
+            MsgBox msg, vbInformation, "Photo Web Link"
+            Application.FollowHyperlink (ImageLocationOnWeb & "?field=feature&id=" & Me![Feature Number])
+        End If
+    Else
+    End If
+    Set tmptable = Nothing
+    mydb.Close
+    Set mydb = Nothing
+Exit Sub
+err_cmdGoToImage_Click:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdPrintFeatureSheet_Click()
+On Error GoTo err_print
+    If Me![Feature Number] <> "" Then
+        DoCmd.OpenReport "R_Feature_Sheet", acViewPreview, , "[feature number] = " & Me![Feature Number]
+    End If
+Exit Sub
+err_print:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub cmdReportProblem_Click()
+On Error GoTo err_reportprob
+    DoCmd.OpenForm "frm_pop_problemreport", , , , acFormAdd, acDialog, "feature number;" & Me![Feature Number]
+Exit Sub
+err_reportprob:
     Call General_Error_Trap
     Exit Sub
 End Sub
@@ -138,6 +217,17 @@ If Me![Feature Type] <> "" Then
     Me![cboFeatureSubType].RowSource = "SELECT [Exca:FeatureSubTypeLOV].FeatureSubType FROM [Exca:FeatureTypeLOV] INNER JOIN [Exca:FeatureSubTypeLOV] ON [Exca:FeatureTypeLOV].FeatureTypeID = [Exca:FeatureSubTypeLOV].FeatureTypeID WHERE ((([Exca:FeatureTypeLOV].FeatureType)='" & Me![Feature Type] & "')) ORDER BY [Exca:FeatureSubTypeLOV].FeatureSubType; "
     Me![cboFeatureSubType].Requery
 End If
+If LCase(Me![Feature Type]) = "burial" Then
+    Dim permiss
+    permiss = GetGeneralPermissions
+    If permiss = "ADMIN" Then
+        Me!txtBurialMNI.Enabled = True
+        Me!txtBurialMNI.Enabled = False
+    Else
+        Me!txtBurialMNI.Enabled = False
+        Me!txtBurialMNI.Enabled = True
+    End If
+End If
 Exit Sub
 err_Feature_Type:
     Call General_Error_Trap
@@ -160,7 +250,7 @@ Private Sub Form_Current()
 On Error GoTo err_Form_Current
 Dim permiss
 permiss = GetGeneralPermissions
-If permiss = "ADMIN" Or permiss = "RW" Then
+If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
     If IsNull(Me![Feature Number]) Or Me![Feature Number] = "" Then
         ToggleFormReadOnly Me, True, "Additions" 'code in GeneralProcedures-shared
         Me![lblMsg].Visible = True
@@ -188,12 +278,31 @@ End If
     If Me.FilterOn = True Or Me.AllowEdits = False Then
         Me![cboFindFeature].Enabled = False
         Me![cmdAddNew].Enabled = False
+    Else
+        If Me![cboFindFeature].Enabled Then DoCmd.GoToControl "cboFindFeature"
     End If
 Me![cboFeatureSubType].RowSource = "SELECT [Exca:FeatureSubTypeLOV].FeatureSubType FROM [Exca:FeatureTypeLOV] INNER JOIN [Exca:FeatureSubTypeLOV] ON [Exca:FeatureTypeLOV].FeatureTypeID = [Exca:FeatureSubTypeLOV].FeatureTypeID WHERE ((([Exca:FeatureTypeLOV].FeatureType)='" & Me![Feature Type] & "')) ORDER BY [Exca:FeatureSubTypeLOV].FeatureSubType; "
+Dim imageCount, Imgcaption
+backhere:
+Imgcaption = "Images of Feature"
+Me![cmdGoToImage].Caption = Imgcaption
+Me![cmdGoToImage].Enabled = True
+If permiss = "ADMIN" And LCase(Me![Feature Type]) = "burial" Then
+    Me!txtBurialMNI.Enabled = True
+    Me!txtBurialMNI.Locked = False
+Else
+    Me!txtBurialMNI.Enabled = False
+    Me!txtBurialMNI.Locked = True
+End If
 Exit Sub
 err_Form_Current:
-    Call General_Error_Trap
-    Exit Sub
+    If Err.Number = 3146 Then 'odbc call failed, crops up every so often on all
+        imageCount = "?"
+        GoTo backhere
+    Else
+        Call General_Error_Trap
+        Exit Sub
+    End If
 End Sub
 Private Sub Form_Error(DataErr As Integer, response As Integer)
 Dim msg
@@ -213,13 +322,13 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     If Not IsNull(Me.OpenArgs) Then
         Dim getArgs, whatTodo, NumKnown, AreaKnown
-        Dim firstcomma, action
+        Dim firstcomma, Action
         getArgs = Me.OpenArgs
         If Len(getArgs) > 0 Then
             firstcomma = InStr(getArgs, ",")
             If firstcomma <> 0 Then
-                action = Left(getArgs, firstcomma - 1)
-                If UCase(action) = "NEW" Then DoCmd.GoToRecord acActiveDataObject, , acNewRec
+                Action = Left(getArgs, firstcomma - 1)
+                If UCase(Action) = "NEW" Then DoCmd.GoToRecord acActiveDataObject, , acNewRec
                 NumKnown = InStr(UCase(getArgs), "NUM:")
                 If NumKnown <> 0 Then
                     NumKnown = Mid(getArgs, NumKnown + 4, InStr(NumKnown, getArgs, ",") - (NumKnown + 4))
@@ -239,10 +348,11 @@ On Error GoTo err_Form_Open
             Me.AllowAdditions = False
             Me![lblMsg].Visible = False
         End If
+    Else
     End If
     Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
     Else
         ToggleFormReadOnly Me, True
         Me![cmdAddNew].Enabled = False

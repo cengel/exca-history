@@ -10,7 +10,7 @@ On Error GoTo Err_cmdGoToSpace_Click
         checknum = DLookup("[Space Number]", "[Exca: Space Sheet]", "[Space Number] = " & Me![txtIn_Space])
         If IsNull(checknum) Then
             permiss = GetGeneralPermissions
-            If permiss = "ADMIN" Or permiss = "RW" Then
+            If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
                 msg = "This Space Number DOES NOT EXIST in the database."
                 msg = msg & Chr(13) & Chr(13) & "Would you like to enter it now?"
                 retVal = MsgBox(msg, vbInformation + vbYesNo, "Space Number does not exist")
@@ -61,7 +61,7 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
         ToggleFormReadOnly Me, False
     Else
         ToggleFormReadOnly Me, True
@@ -102,6 +102,28 @@ If Me![txtIn_Space] <> "" Then
 End If
 Exit Sub
 err_txtIn_Space_AfterUpdate:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub txtIn_Space_BeforeUpdate(Cancel As Integer)
+On Error GoTo err_spacebefore
+If Me![txtIn_Space] = 0 Then
+        MsgBox "Space 0 is invalid, this entry will be removed", vbInformation, "Invalid Entry"
+        Cancel = True
+        SendKeys "{ESC}" 'seems to need it done 3x
+        SendKeys "{ESC}"
+        SendKeys "{ESC}"
+End If
+Exit Sub
+err_spacebefore:
+    Call General_Error_Trap
+    Exit Sub
+End Sub
+Private Sub txtIn_Space_LostFocus()
+On Error GoTo err_lost
+    Forms![Exca: Unit Sheet]![Exca: subform Units  in Buildings].Form.Requery
+Exit Sub
+err_lost:
     Call General_Error_Trap
     Exit Sub
 End Sub

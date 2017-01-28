@@ -12,7 +12,7 @@ err_GetCurrentVersion:
 End Function
 Function SetCurrentVersion()
 On Error GoTo err_SetCurrentVersion
-Dim retVal
+Dim retVal, centralver
 retVal = "v"
 If DBName <> "" Then
     Dim mydb As Database, myrs As Recordset
@@ -22,7 +22,17 @@ If DBName <> "" Then
     Set myrs = mydb.OpenRecordset(sql, dbOpenSnapshot)
     If Not (myrs.BOF And myrs.EOF) Then
         myrs.MoveFirst
+        centralver = myrs![Version_num]
         retVal = retVal & myrs![Version_num]
+        If centralver <> VersionNumberLocal Then
+            Dim msg
+            msg = "There is a new version of the Excavation database file available. " & Chr(13) & Chr(13) & _
+                    "Please close this copy now and run 'Update Databases.bat' on your desktop or " & _
+                    "copy the file 'Excavation Central Database.mdb' from G:\2009 Central Server Databases " & _
+                    " into the 'New Database Files folder' on your desktop." & Chr(13) & Chr(13) & "If you do not do this" & _
+                    " you may experience problems using this database and you will not be able to utilise any new functionaility that has been added."
+            MsgBox msg, vbExclamation + vbOKOnly, "New version available"
+        End If
     End If
     myrs.Close
     Set myrs = Nothing
@@ -45,6 +55,7 @@ Dim myq1 As QueryDef
     Set mydb = CurrentDb
     Set myq1 = mydb.CreateQueryDef("")
     myq1.Connect = connStr & ";UID=" & username & ";PWD=" & pwd
+    spString = connStr & ";UID=" & username & ";PWD=" & pwd
     myq1.ReturnsRecords = True
     myq1.sql = "sp_table_privilege_overview_for_user '%', 'dbo', null, '" & username & "'"
     Dim myrs As Recordset
@@ -57,7 +68,11 @@ Dim myq1 As QueryDef
         If InStr(usr, "RO") <> 0 Then
             tempVal = "RO"
         ElseIf InStr(usr, "ADMIN") <> 0 Then
-            tempVal = "ADMIN"
+            If username = "exsuper" Then
+                tempVal = "exsuper"
+            Else
+                tempVal = "ADMIN"
+            End If
         ElseIf InStr(usr, "RW") <> 0 Then
             tempVal = "RW"
         Else
@@ -215,3 +230,18 @@ err_GetPermissionsForRoles:
     MsgBox Err.Description
     GoTo cleanup
 End Sub
+Function GetCurrentYear()
+On Error GoTo err_GetCurrentYear
+    GetCurrentYear = ThisYear
+Exit Function
+err_GetCurrentYear:
+    Call General_Error_Trap
+End Function
+Function SetCurrentYear()
+On Error GoTo err_SetCurrentYear
+    ThisYear = Year(Date)
+    SetCurrentYear = ThisYear
+Exit Function
+err_SetCurrentYear:
+    Call General_Error_Trap
+End Function

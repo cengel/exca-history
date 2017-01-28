@@ -158,12 +158,12 @@ Err_go_feature_Click:
     MsgBox Err.Description
     Resume Exit_go_feature_Click
 End Sub
-Sub close_Click()
-On Error GoTo Err_close_Click
+Sub Close_Click()
+On Error GoTo err_close_Click
     DoCmd.Close
 Exit_close_Click:
     Exit Sub
-Err_close_Click:
+err_close_Click:
     MsgBox Err.Description
     Resume Exit_close_Click
 End Sub
@@ -183,7 +183,7 @@ Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open
     Dim permiss
     permiss = GetGeneralPermissions
-    If permiss = "ADMIN" Or permiss = "RW" Then
+    If permiss = "ADMIN" Or permiss = "RW" Or permiss = "exsuper" Then
         ToggleFormReadOnly Me, False
     Else
         ToggleFormReadOnly Me, True
