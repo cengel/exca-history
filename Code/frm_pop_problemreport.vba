@@ -33,7 +33,7 @@ On Error GoTo err_cmdOK
             Set myq1 = mydb.CreateQueryDef("")
             myq1.Connect = spString
             myq1.ReturnsRecords = False
-            myq1.sql = "sp_Excavation_Add_Problem_Report_Entry " & entitynum & ", '" & toShow & "','" & strcomment & "','" & Me![ReportersName] & "','" & Format(Date, "dd/mm/yyyy") & "'"
+            myq1.sql = "sp_Excavation_Add_Problem_Report_Entry " & entitynum & ", '" & toShow & "','" & strcomment & "','" & Me![ReportersName] & "','" & Format(Date, "Long Date") & "'"
             myq1.Execute
             myq1.Close
             Set myq1 = Nothing
@@ -53,7 +53,7 @@ End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_open
 Dim colonpos
-    If Not IsNull(Me.OpenArgs) Then
+     If Not IsNull(Me.OpenArgs) Then
         Me![cboSelect].Visible = False
         toShow = LCase(Me.OpenArgs)
         colonpos = InStr(toShow, ";")
