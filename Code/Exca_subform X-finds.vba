@@ -16,6 +16,7 @@ Update_GID
 End Sub
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 Me![Date changed] = Now()
+Forms![Exca: Unit Sheet]![dbo_Exca: UnitHistory].Form![lastmodify].Value = Now()
 End Sub
 Private Sub Form_Open(Cancel As Integer)
 On Error GoTo err_Form_Open

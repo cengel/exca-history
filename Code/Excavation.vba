@@ -164,3 +164,15 @@ Err_interpret_Click:
     Call General_Error_Trap
     Resume Exit_interpret_Click
 End Sub
+Private Sub UnitStatus_Click()
+On Error GoTo Err_UnitStatus_Click
+    Dim stDocName As String
+    Dim stLinkCriteria As String
+    stDocName = "UnitsheetStatus"
+    DoCmd.OpenForm stDocName, , , stLinkCriteria
+Exit_UnitStatus_Click:
+    Exit Sub
+Err_UnitStatus_Click:
+    Call General_Error_Trap
+    Resume Exit_UnitStatus_Click
+End Sub

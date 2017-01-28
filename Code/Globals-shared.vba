@@ -2,7 +2,7 @@ Option Compare Database
 Option Explicit
 Public Const DBName = "Excavation Central Database"
 Public VersionNumber
-Public Const VersionNumberLocal = "18" 'NEW 2009 TO FLAG UPDATE MESSAGE TO USER - see SetCurrentVersion in module General Procedures-shared
+Public Const VersionNumberLocal = "18.2" 'NEW 2009 TO FLAG UPDATE MESSAGE TO USER - see SetCurrentVersion in module General Procedures-shared
 Public GeneralPermissions
 Public Const ImageLocationOnSite = "H:\Catalhoyuk\images\"
 Public Const ImageLocationOnWeb = "http://www.catalhoyuk.com/database/database_new/test/getphoto.asp"

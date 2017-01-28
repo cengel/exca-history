@@ -1,6 +1,6 @@
 Option Compare Database
 Option Explicit
-Private Sub cmdGoToUnit_Click()
+Private Sub cmdgotounit_Click()
 On Error GoTo Err_cmdGoToSpace_Click
     Dim stDocName As String
     Dim stLinkCriteria As String

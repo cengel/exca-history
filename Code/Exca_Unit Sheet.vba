@@ -274,7 +274,7 @@ Err_Category_AfterUpdate:
 End Sub
 Private Sub cboExcavationStatus_AfterUpdate()
 On Error GoTo err_cboExcaStatus
-    If Me![cboExcavationStatus] <> "excavated" And Me![cboExcavationStatus] <> "not excavated" Then
+    If Me![cboExcavationStatus] <> "excavated" And Me![cboExcavationStatus] <> "not excavated" And Me![cboExcavationStatus] <> "partially excavated" Then
         If Me![Category] = "" Or IsNull(Me![Category]) Then
             Me![Category] = Me![cboExcavationStatus]
             Me![Category].Locked = True
@@ -641,6 +641,7 @@ End Sub
 Private Sub Form_AfterInsert()
 On Error GoTo err_Form_AfterInsert
 Me![Date changed] = Now()
+Forms![Exca: Unit Sheet]![dbo_Exca: UnitHistory].Form![lastmodify].Value = Now()
 Exit Sub
 err_Form_AfterInsert:
     Call General_Error_Trap
@@ -649,6 +650,7 @@ End Sub
 Private Sub Form_AfterUpdate()
 On Error GoTo err_Form_AfterUpdate
 Me![Date changed] = Now()
+Forms![Exca: Unit Sheet]![dbo_Exca: UnitHistory].Form![lastmodify].Value = Now()
 Exit Sub
 err_Form_AfterUpdate:
     Call General_Error_Trap
@@ -662,6 +664,7 @@ If IsNull(Me![Exca: subform Unit Plans].Form![Graphic Number]) Then
     End If
 End If
 Me![Date changed] = Now()
+Forms![Exca: Unit Sheet]![dbo_Exca: UnitHistory].Form![lastmodify].Value = Now()
 Exit Sub
 err_Form_BeforeUpdate:
     Call General_Error_Trap

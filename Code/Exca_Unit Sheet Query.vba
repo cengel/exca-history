@@ -123,12 +123,15 @@ Err_find_unit_Click:
 End Sub
 Private Sub Form_AfterInsert()
 Me![Date changed] = Now()
+Forms![Exca: Unit Sheet]![dbo_Exca: UnitHistory].Form![lastmodify].Value = Now()
 End Sub
 Private Sub Form_AfterUpdate()
 Me![Date changed] = Now()
+Forms![Exca: Unit Sheet]![dbo_Exca: UnitHistory].Form![lastmodify].Value = Now()
 End Sub
 Private Sub Form_BeforeUpdate(Cancel As Integer)
 Me![Date changed] = Now()
+Forms![Exca: Unit Sheet]![dbo_Exca: UnitHistory].Form![lastmodify].Value = Now()
 End Sub
 Private Sub Form_Current()
 Dim stDocName As String
